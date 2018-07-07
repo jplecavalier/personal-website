@@ -1,5 +1,11 @@
+# R + RStudio user's data
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
+
+# Packrat libraries
 packrat/lib*/
+
+# Generated site (automatically build when committed)
+public/
