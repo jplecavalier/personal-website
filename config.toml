@@ -29,6 +29,7 @@ googleAnalytics = ""
 defaultContentLanguage = "fr"
 hasCJKLanguage = false  # Set `true` for Chinese/Japanese/Korean languages.
 defaultContentLanguageInSubdir = true
+#disableLanguages = ["en"]
 
 # Get last modified date for content from Git?
 enableGitInfo = false
@@ -55,7 +56,6 @@ enableGitInfo = false
 
   # Your details.
   name = "J.P. Le Cavalier"
-  role = "Actuaire en assurance de dommages"
 
   # Organizations/Affiliations.
   #   Separate multiple entries with a comma, using the form: `[ {name="Org1", url=""}, {name="Org2", url=""} ]`.
@@ -64,7 +64,6 @@ enableGitInfo = false
   gravatar = false  # Get your avatar from Gravatar.com? (true/false)
   avatar = "20170517-jpl-square.png"  # Specify an avatar image (in `static/img/` folder) or delete value to disable avatar.
   email = "jplecavalier@me.com"
-  address = "Québec, QC, Canada"
   office_hours = ""
   phone = ""
   skype = ""
@@ -336,7 +335,11 @@ enableGitInfo = false
 # Configure the French version of the website.
 [Languages.fr]
   languageCode = "fr-CA"
+  role = "Actuaire"
+  address = "Québec, QC, Canada"
 
 # Configure the English version of the website.
 [Languages.en]
   languageCode = "en-US"
+  role = "Actuary"
+  address = "Quebec City, QC, Canada"
