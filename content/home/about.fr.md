@@ -19,7 +19,7 @@ weight = 5
 
 # List your qualifications (such as academic degrees).
 [[education.courses]]
-  course = "BSc en actuariat"
+  course = "B.Sc. en actuariat"
   institution = "Université Laval"
   year = 2013
  
