@@ -23,7 +23,7 @@ paginate = 10
 disqusShortname = ""
 
 # Enable analytics by entering your Google Analytics tracking ID
-googleAnalytics = ""
+googleAnalytics = "UA-126179665-1"
 
 # Default language to use (if you setup multilingual support)
 defaultContentLanguage = "fr"
@@ -48,18 +48,17 @@ enableGitInfo = false
 [params]
   # Color theme.
   #   Choose from `default`, `ocean`, `forest`, `coffee`, `dark`, or `1950s`.
-  color_theme = "default"
+  color_theme = "jplecavalier"
 
   # Font style.
   #   Choose from `default`, `classic`, or `playfair`.
-  font = "default"
+  font = "jplecavalier"
 
   # Your details.
   name = "J.P. Le Cavalier"
 
   # Organizations/Affiliations.
   #   Separate multiple entries with a comma, using the form: `[ {name="Org1", url=""}, {name="Org2", url=""} ]`.
-  organizations = [ { name = "Intact Assurance", url = "https://www.intact.ca/" }, { name = "Université Laval", url = "https://www.ulaval.ca/" } ]
 
   gravatar = false  # Get your avatar from Gravatar.com? (true/false)
   avatar = "20170517-jpl-square.png"  # Specify an avatar image (in `static/img/` folder) or delete value to disable avatar.
@@ -68,6 +67,11 @@ enableGitInfo = false
   phone = ""
   skype = ""
   telegram = ""
+  twitter = "Lecavalier300"
+  github = "jplecavalier"
+  linkedin = "jplecavalier"
+  facebook = "jplecavalier"
+  instagram = "lecavalier300"
 
   # Enable Keybase in Contact widget by entering your keybase.io username.
   keybase = ""
@@ -114,7 +118,7 @@ enableGitInfo = false
   comment_count = true
 
   # Display next/previous section pager?
-  section_pager = false
+  section_pager = true
 
   # Enable global LaTeX math rendering?
   #   If false, you can enable it locally on a per page basis.
@@ -267,25 +271,15 @@ enableGitInfo = false
   url = "#about"
   weight = 1
 
-[[Languages.fr.menu.main]]
-  name = "Publications"
-  url = "#publications_selected"
-  weight = 2
+#[[Languages.fr.menu.main]]
+#  name = "Blogue"
+#  url = "#posts"
+#  weight = 2
 
 [[Languages.fr.menu.main]]
-  name = "Articles"
-  url = "#posts"
+  name = "Conférences"
+  url = "#talks"
   weight = 3
-
-[[Languages.fr.menu.main]]
-  name = "Projets"
-  url = "#projects"
-  weight = 4
-
-[[Languages.fr.menu.main]]
-  name = "Enseignement"
-  url = "#teaching"
-  weight = 5
 
 [[Languages.fr.menu.main]]
   name = "Coordonnées"
@@ -298,25 +292,15 @@ enableGitInfo = false
   url = "#about"
   weight = 1
 
-[[Languages.en.menu.main]]
-  name = "Publications"
-  url = "#publications_selected"
-  weight = 2
+#[[Languages.en.menu.main]]
+#  name = "Blog"
+#  url = "#posts"
+#  weight = 2
 
 [[Languages.en.menu.main]]
-  name = "Posts"
-  url = "#posts"
+  name = "Talks"
+  url = "#talks"
   weight = 3
-
-[[Languages.en.menu.main]]
-  name = "Projects"
-  url = "#projects"
-  weight = 4
-
-[[Languages.en.menu.main]]
-  name = "Teaching"
-  url = "#teaching"
-  weight = 5
 
 [[Languages.en.menu.main]]
   name = "Contact"
@@ -337,9 +321,11 @@ enableGitInfo = false
   languageCode = "fr-CA"
   role = "Actuaire"
   address = "Québec, QC, Canada"
+  organizations = [ { name = "Intact Assurance", url = "https://www.intact.ca/fr/assurance-particuliers.html" }, { name = "École d'actuariat de l'Université Laval", url = "https://www.act.ulaval.ca/accueil/" } ]
 
 # Configure the English version of the website.
 [Languages.en]
   languageCode = "en-US"
   role = "Actuary"
   address = "Quebec City, QC, Canada"
+  organizations = [ { name = "Intact Insurance", url = "https://www.intact.ca/en/personal-insurance.html" }, { name = "École d'actuariat de l'Université Laval", url = "https://www.act.ulaval.ca/accueil/" } ]
