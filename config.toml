@@ -270,6 +270,11 @@ enableGitInfo = false
   name = "Accueil"
   url = "#about"
   weight = 1
+  
+[[Languages.fr.menu.main]]
+  name = "CV"
+  url = "../files/cv-20190516.pdf"
+  weight = 2
 
 #[[Languages.fr.menu.main]]
 #  name = "Blogue"
@@ -291,6 +296,11 @@ enableGitInfo = false
   name = "Home"
   url = "#about"
   weight = 1
+  
+[[Languages.en.menu.main]]
+  name = "CV"
+  url = "../files/cv-20190516.pdf"
+  weight = 2
 
 #[[Languages.en.menu.main]]
 #  name = "Blog"
