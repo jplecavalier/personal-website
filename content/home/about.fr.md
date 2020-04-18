@@ -10,9 +10,8 @@ weight = 5
 [interests]
   interests = [
     "Assurance de dommages",
-    "Enseignement",
-    "Programmation",
-    "Travail reproductible"
+    "Apprentissage automatique",
+    "Géomatique"
   ]
 
 # List your qualifications (such as academic degrees).
@@ -25,8 +24,10 @@ weight = 5
 
 # À propos de moi
 
-Je suis analyste principal en actuariat au DataLab d'Intact Assurance et chargé de cours à l'École d'actuariat de l'Université Laval. Je suis un associé de la Casualty Actuarial Society et de l'Institut Canadien des Actuaires. J'étudie présentement dans le but d'obtenir un fellowship de ces deux organisations. J'ai présentement une maîtrise en statistiques en cours sous la supervision du professeur Thierry Duchesne de l'Université Laval.
+Je travaille comme scientifique de données principal au siège social de Promutuel Assurance situé dans la ville de Québec, QC. Je suis un fellow de la Casualty Actuarial Society (FCAS) et un associé de l'Institut Canadien des Actuaires (AICA).
 
-Je me plais à dire que c'est mon amour des mathématiques qui m'a entraîné vers l'actuariat et que l'actuariat m'amène depuis à tromper mes mathématiques avec la programmation, ma nouvelle flamme. J'essaie de travailler le plus possible avec des logiciels libres et de m'impliquer dans les communautés bâties autour de ces logiciels. Je trouve que rien au monde n'est plus valorisant que de partager ses diverses connaissances à tous ces autres gens motivés que comptent ces communautés.
+Au bureau, mon rôle principal est d'aider différentes équipes ayant une orientation axée vers les affaires à mieux exploiter leurs données. Le but premier est toujours le même, créer de la valeur pour l'organisation.
 
-Mes temps libres se résument à jouer du piano et à écrire. J'ai d'ailleurs toujours cru que l'écriture est le meilleur moyen de structurer ses pensées.
+Mes projets personnels sont assez variés. J'aime particulièrement travailler avec des jeux de données d'actualité, en tirer des constats intéressants et les vulgariser à un auditoire non-scientifique. On retrouve une constante évidente dans mes projets : j'utilise des logiciels libres pour travailler, peu importe la complexité supplémentaire que ça implique. Le pouvoir et l'agilité des communautés ouvertes me fascinent et j'essaie d'y contribuer à ma façon.
+
+Lorsque mon MacBook est éteint, je joue du piano, je lis un livre ou j'encourage Roger Federer avec une étonnante (et éternelle) passion.

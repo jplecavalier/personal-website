@@ -10,7 +10,7 @@ title = "J.P. Le Cavalier"
 
 # Your copyright notice - appears in site footer.
 # To display a copyright symbol, type `&copy;`.
-copyright = "&copy; 2018 J.P. Le Cavalier"
+copyright = "&copy; 2020 J.P. Le Cavalier"
 
 theme = "hugo-academic"
 enableEmoji = true
@@ -329,13 +329,13 @@ enableGitInfo = false
 # Configure the French version of the website.
 [Languages.fr]
   languageCode = "fr-CA"
-  role = "Actuaire"
+  role = "Scientifique de données / Actuaire"
   address = "Québec, QC, Canada"
-  organizations = [ { name = "Intact Assurance", url = "https://www.intact.ca/fr/assurance-particuliers.html" }, { name = "École d'actuariat de l'Université Laval", url = "https://www.act.ulaval.ca/accueil/" } ]
+  organizations = [ { name = "Promutuel Assurance", url = "https://www.promutuelassurance.ca/fr" } ]
 
 # Configure the English version of the website.
 [Languages.en]
   languageCode = "en-US"
   role = "Actuary"
   address = "Quebec City, QC, Canada"
-  organizations = [ { name = "Intact Insurance", url = "https://www.intact.ca/en/personal-insurance.html" }, { name = "École d'actuariat de l'Université Laval", url = "https://www.act.ulaval.ca/accueil/" } ]
+  organizations = [ { name = "Promutuel Insurance", url = "https://www.promutuelassurance.ca/en" } ]
