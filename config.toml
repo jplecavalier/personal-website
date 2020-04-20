@@ -336,6 +336,6 @@ enableGitInfo = false
 # Configure the English version of the website.
 [Languages.en]
   languageCode = "en-US"
-  role = "Actuary"
+  role = "Data Scientist / Actuary"
   address = "Quebec City, QC, Canada"
   organizations = [ { name = "Promutuel Insurance", url = "https://www.promutuelassurance.ca/en" } ]
