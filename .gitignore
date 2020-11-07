@@ -7,8 +7,5 @@
 .RData
 .Ruserdata
 
-# Packrat libraries
-packrat/lib*/
-
 # Generated site (automatically build when committed)
 public/
