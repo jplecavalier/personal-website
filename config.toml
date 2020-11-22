@@ -275,21 +275,21 @@ enableGitInfo = false
   name = "CV"
   url = "../files/cv-20201106.pdf"
   weight = 2
-
+  
 #[[Languages.fr.menu.main]]
 #  name = "Blogue"
 #  url = "#posts"
-#  weight = 2
+#  weight = 3
+  
+[[Languages.fr.menu.main]]
+  name = "Projets"
+  url = "#projects"
+  weight = 4
 
 [[Languages.fr.menu.main]]
   name = "Conférences"
   url = "#talks"
-  weight = 3
-
-[[Languages.fr.menu.main]]
-  name = "Coordonnées"
-  url = "#contact"
-  weight = 6
+  weight = 5
   
 # English menu
 [[Languages.en.menu.main]]
@@ -305,17 +305,17 @@ enableGitInfo = false
 #[[Languages.en.menu.main]]
 #  name = "Blog"
 #  url = "#posts"
-#  weight = 2
+#  weight = 3
+  
+[[Languages.en.menu.main]]
+  name = "Projects"
+  url = "#projects"
+  weight = 4
 
 [[Languages.en.menu.main]]
   name = "Talks"
   url = "#talks"
-  weight = 3
-
-[[Languages.en.menu.main]]
-  name = "Contact"
-  url = "#contact"
-  weight = 6
+  weight = 5
 
 # Taxonomies.
 [taxonomies]
