@@ -16,6 +16,14 @@ weight = 5
 
 # List your qualifications (such as academic degrees).
 [[education.courses]]
+  course = "FCAS"
+  institution = "Casualty Actuarial Society"
+  year = 2020
+[[education.courses]]
+  course = "ACIA"
+  institution = "Canadian Institute of Actuaries"
+  year = 2018
+[[education.courses]]
   course = "B.Sc. in Actuarial Science"
   institution = "Université Laval"
   year = 2013
@@ -24,9 +32,7 @@ weight = 5
 
 # About me
 
-I work as a senior data scientist at Promutuel Insurance's head office in Quebec City, QC. I am a fellow of the Casualty Actuarial Society (FCAS) and an associate of the Canadian Institute of Actuaries (ACIA).
-
-At work, my main role is to help different business teams to leverage their data the best possible way. The ultimate goal is always the same, creating meaningful value for the organization.
+I work as a senior data scientist at Promutuel Insurance's head office in Quebec City, QC in Canada. My main role is to help different business teams to leverage their data the best possible way. The ultimate goal is always the same, creating meaningful value for the organization.
 
 My personal projects are well diversified. I particularly like to explore trendy datasets, squeeze out some interesting facts and then vulgarize them for a non-scientific audience. One would find an obvious constant among my projects: I try to use open source softwares to accomplish anything, whatever the extra complexicty it brings. The power and agility of open source communities fascinate me and I try to contribute my own way.
 
