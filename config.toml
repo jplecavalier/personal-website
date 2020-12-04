@@ -276,10 +276,10 @@ enableGitInfo = false
   url = "../files/cv-20201106.pdf"
   weight = 2
   
-#[[Languages.fr.menu.main]]
-#  name = "Blogue"
-#  url = "#posts"
-#  weight = 3
+[[Languages.fr.menu.main]]
+  name = "Blogue"
+  url = "#posts"
+  weight = 3
   
 [[Languages.fr.menu.main]]
   name = "Projets"
@@ -302,10 +302,10 @@ enableGitInfo = false
   url = "../files/cv-20190516.pdf"
   weight = 2
 
-#[[Languages.en.menu.main]]
-#  name = "Blog"
-#  url = "#posts"
-#  weight = 3
+[[Languages.en.menu.main]]
+  name = "Blog"
+  url = "#posts"
+  weight = 3
   
 [[Languages.en.menu.main]]
   name = "Projects"
