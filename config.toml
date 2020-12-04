@@ -273,7 +273,7 @@ enableGitInfo = false
   
 [[Languages.fr.menu.main]]
   name = "CV"
-  url = "../files/cv-20201106.pdf"
+  url = "../files/cv-20201204.pdf"
   weight = 2
   
 [[Languages.fr.menu.main]]
@@ -299,7 +299,7 @@ enableGitInfo = false
   
 [[Languages.en.menu.main]]
   name = "CV"
-  url = "../files/cv-20190516.pdf"
+  url = "../files/cv-20201204.pdf"
   weight = 2
 
 [[Languages.en.menu.main]]

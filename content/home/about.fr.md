@@ -20,9 +20,9 @@ weight = 5
   institution = "Casualty Actuarial Society"
   year = 2020
 [[education.courses]]
-  course = "AICA"
+  course = "FICA"
   institution = "Institut canadien des actuaires"
-  year = 2018
+  year = 2020
 [[education.courses]]
   course = "B.Sc. en actuariat"
   institution = "Université Laval"
