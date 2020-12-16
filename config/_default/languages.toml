@@ -1,0 +1,47 @@
+# Languages
+#   Create a `[X]` block for each language you want, where X is the language ID.
+#   Refer to https://sourcethemes.com/academic/docs/language/
+
+# Configure the French version of the site.
+[fr]
+  languageCode = "fr-ca"
+  [[fr.menu.main]]
+    name = "Blogue"
+    url = "#posts"
+    weight = 60
+  [[fr.menu.main]]
+    name = "Ateliers & Conférences"
+    url = "#talks"
+    weight = 70
+  [[fr.menu.main]]
+    name = "Projets"
+    url = "#projects"
+    weight = 75
+
+# Configure the English version of the site.
+[en]
+  languageCode = "en-us"
+  [[en.menu.main]]
+    name = "Blog"
+    url = "#posts"
+    weight = 60
+  [[en.menu.main]]
+    name = "Talks & Workshops"
+    url = "#talks"
+    weight = 70
+  [[en.menu.main]]
+    name = "Projects"
+    url = "#projects"
+    weight = 75
+
+# Uncomment the lines below to configure your website in another language.
+#[zh]
+#  languageCode = "zh-Hans"
+#  contentDir = "content/zh"
+#  title = "Chinese website title..."
+#  [zh.params]
+#    description = "Site description in Chinese..."
+#  [[zh.menu.main]]
+#    name = "Wo"
+#    url = "#about"
+#    weight = 1

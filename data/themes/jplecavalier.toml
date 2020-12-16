@@ -1,13 +1,11 @@
 # Theme metadata
-name = "Default"
+name = "jplecavalier"
 
 # Is theme light or dark?
 light = true
 
 # Primary
 primary = "#eb0000"
-primary_light = "#ff6e6e"
-primary_dark = "#c00000"
 
 # Menu
 menu_primary = "rgb(247, 247, 247)"

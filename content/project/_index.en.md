@@ -1,5 +1,5 @@
 ---
-title: Ateliers & Conférences
+title: Projects
 
 # View.
 #   1 = List
