@@ -6,7 +6,7 @@ related_contents: "R Conference"
 
 location: UQAM, Sherbrooke Building, Room 2800
 address:
-  street: 200 Rue Sherbrooke Ouest
+  street: 200 Rue Sherbrooke O
   city: Montréal
   region: QC
   postcode: H2X 1X5
