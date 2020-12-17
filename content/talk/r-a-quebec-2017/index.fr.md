@@ -58,9 +58,9 @@ links:
 math: false
 ---
 
-La classe prédestinée à stocker des données structurées en **R** est le `data.frame`. Conformément à chaque classe développée dans le coeur de **R**, on ne
-peut accéder à un objet de classe `data.frame` directement en référence. On doit créer une copie de l’objet à chaque fois où on veut en modifier une partie et
-ensuite le réassigner.
+La classe prédestinée à stocker des données structurées en <i class="fab fa-r-project"></i> est le `data.frame`. Conformément à chaque classe développée dans
+le coeur de <i class="fab fa-r-project"></i>, on ne peut accéder à un objet de classe `data.frame` directement en référence. On doit créer une copie de l’objet
+à chaque fois où on veut en modifier une partie et ensuite le réassigner.
 
 Introduite en 2006 par Matt Dowle, la classe `data.table`, provenant du *package* du même nom, est une extension du `data.frame` permettant de contourner cette
 obligation. En effet, un objet de classe `data.table` permet une modification de lui-même en référence, ce qui devient nécessaire lorsque le jeu de données

@@ -66,14 +66,15 @@ math: false
 
 Bien que l'utilisation des langages de programmation *open-source* soit de plus en plus acceptée au sein d'organisations historiquement craintives, on entend
 souvent des critiques face à l'évolution rapide de ces langages entraînant un manque de stabilité dans un contexte professionnel. Certaines compagnies ont
-d'ailleurs lancé des produits un peu plus conventionnels pour faciliter l'intégration de **R** en entreprise. J'en conviens, certaines de ces solution
-fonctionnent bien, assurent un grand niveau de reproductibilité et sont bien adaptées pour les utilisateurs qui recherchent un produit clé en main.
+d'ailleurs lancé des produits un peu plus conventionnels pour faciliter l'intégration de <i class="fab fa-r-project"></i> en entreprise. J'en conviens,
+certaines de ces solution fonctionnent bien, assurent un grand niveau de reproductibilité et sont bien adaptées pour les utilisateurs qui recherchent un
+produit clé en main.
 
 Mon humble opinion est que ce genre de solution commerciale propose certe une facilité de reproductibilité, mais au détriment de l'agilité habituelle à
 intégrer les toutes dernières versions de *packages* toujours en développement actif. Le *package* [`packrat`](https://rstudio.github.io/packrat/) assure la
 reproductibilité d'un projet dans le temps sans n'avoir aucun désavantage collatéral. L'idée derrière [`packrat`](https://rstudio.github.io/packrat/) est
 d'attacher à un projet sa propre librairie de *packages* plutôt que d'utiliser les *packages* de l'utilisateur, ce qui est le comportement par défaut lorsqu'on
-exécute du code **R**.
+exécute du code <i class="fab fa-r-project"></i>.
 
 Ma présentation se veut donc une introduction au *package* [`packrat`](https://rstudio.github.io/packrat/), à son intégration dans RStudio et à l'interraction
-qu'il peut y avoir entre l'utilisation combinée de [`packrat`](https://rstudio.github.io/packrat/) et *git* dans un même projet.
+qu'il peut y avoir entre l'utilisation combinée de [`packrat`](https://rstudio.github.io/packrat/) et <i class="fab fa-git"></i> dans un même projet.
