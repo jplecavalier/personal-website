@@ -1,12 +1,16 @@
-/*************************************************
- *  Sharing
- **************************************************/
-
+// Left-justify sharing
 ul.share {
   justify-content: left;
 }
 
+// Make article preview bold-italic
 .article-preview {
   font-weight: bold;
   font-style: italic;
+}
+
+// Keep emoji non-bold and non-italic
+.emoji {
+  font-weight: normal;
+  font-style: normal;
 }

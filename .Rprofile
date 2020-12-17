@@ -5,3 +5,7 @@ options(
   blogdown.yaml.empty = TRUE,
   blogdown.new_bundle = TRUE
 )
+
+emoji <- function(keyword) {
+  htmltools::tags$span(class="emoji", emo::ji(keyword))
+}
