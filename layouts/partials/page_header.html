@@ -58,7 +58,13 @@
   {{ with $page.Params.subtitle }}
   <p class="page-subtitle">{{ . | markdownify | emojify }}</p>
   {{end}}
-
+  
+  {{ if $page.Params.authors }}
+    <span class="article-metadata">
+      {{ partial "page_metadata_authors" $page }}
+    </span>
+  {{ end }}
+  
   {{ partial "page_metadata" (dict "page" $page "is_list" 0 "share" true) }}
   {{ partial "page_links_div.html" $page }}
   {{ partial "share" . }}

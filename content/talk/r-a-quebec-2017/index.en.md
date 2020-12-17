@@ -1,27 +1,29 @@
 ---
 title: "data.table: a must have!"
-event: R à Québec 2017
+authors:
+  - jplecavalier
+event: "R à Québec 2017"
 event_url: http://raquebec.ulaval.ca/2017
 related_contents: "R Conference"
 
-location: Université Laval, Alphonse-Desjardins Building, Hydro-Québec Room
+location: "Université Laval, Alphonse-Desjardins Building, Hydro-Québec Room"
 address:
-  street: 2325 Rue de l'Université
-  city: Québec
-  region: QC
-  postcode: G1V 0A6
-  country: Canada
+  street: "2325 Rue de l'Université"
+  city: "Québec"
+  region: "QC"
+  postcode: "G1V 0A6"
+  country: "Canada"
   
-summary: This talk is an introduction to basic features of the data.table package.
+summary: "This talk is an introduction to basic features of the data.table package."
 
 # Talk start and end times.
 #   End time can optionally be hidden by prefixing the line with `#`.
-date: "2017-05-26T17:00:00Z"
-date_end: "2017-05-26T17:30:00Z"
+date: 2017-05-26T17:00:00Z
+date_end: 2017-05-26T17:30:00Z
 all_day: false
 
 # Schedule page publish date (NOT talk date).
-# publishDate: "2017-01-01T00:00:00Z"
+# publishDate: 2017-01-01T00:00:00Z
 
 tags:
   - r
@@ -34,7 +36,7 @@ featured: false
 links:
 - icon: images
   icon_pack: fas
-  name: Slides
+  name: "Slides"
   url: https://jplecavalier.github.io/r-quebec-2017/20170526_r_a_quebec.html
 
 # Markdown Slides (optional).

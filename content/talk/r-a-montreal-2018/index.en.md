@@ -1,27 +1,29 @@
 ---
 title: "Reproducible work with packrat"
-event: R à Montreal 2018
+authors:
+  - jplecavalier
+event: "R à Montreal 2018"
 event_url: http://rmontreal2018.ca
 related_contents: "R Conference"
 
-location: UQAM, Sherbrooke Building, Room 2800
+location: "UQAM, Sherbrooke Building, Room 2800"
 address:
-  street: 200 Rue Sherbrooke O
-  city: Montréal
-  region: QC
-  postcode: H2X 1X5
-  country: Canada
+  street: "200 Rue Sherbrooke O"
+  city: "Montréal"
+  region: "QC"
+  postcode: "H2X 1X5"
+  country: "Canada"
   
-summary: This talk is an introduction to basic features of the packrat package.
+summary: "This talk is an introduction to basic features of the packrat package."
 
 # Talk start and end times.
 #   End time can optionally be hidden by prefixing the line with `#`.
-date: "2018-07-05T14:45:00Z"
-date_end: "2018-07-05T15:15:00Z"
+date: 2018-07-05T14:45:00Z
+date_end: 2018-07-05T15:15:00Z
 all_day: false
 
 # Schedule page publish date (NOT talk date).
-# publishDate: "2017-01-01T00:00:00Z"
+# publishDate: 2017-01-01T00:00:00Z
 
 tags:
   - r
@@ -34,11 +36,11 @@ featured: false
 links:
 - icon: images
   icon_pack: fas
-  name: Slides
+  name: "Slides"
   url: https://jplecavalier.github.io/r-montreal-2018/travail-reproductible-packrat.html
 - icon: github
   icon_pack: fab
-  name: Code
+  name: "Code"
   url: https://github.com/jplecavalier/r-montreal-2018
 
 # Markdown Slides (optional).
