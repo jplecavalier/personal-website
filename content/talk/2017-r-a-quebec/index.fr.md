@@ -1,12 +1,12 @@
 ---
-title: "data.table: a must have!"
+title: "data.table : un incontournable!"
 authors:
   - jplecavalier
 event: "R à Québec 2017"
 event_url: http://raquebec.ulaval.ca/2017
 related_contents: "R Conference"
 
-location: "Université Laval, Alphonse-Desjardins Building, Hydro-Québec Room"
+location: "Université Laval, Pavillon Desjardins, Salle Hydro-Québec"
 address:
   street: "2325 Rue de l'Université"
   city: "Québec"
@@ -14,7 +14,7 @@ address:
   postcode: "G1V 0A6"
   country: "Canada"
   
-summary: "This talk is an introduction to basic features of the data.table package."
+summary: "Cette conférence se veut une introduction aux fonctionnalités de base du package data.table."
 
 # Talk start and end times.
 #   End time can optionally be hidden by prefixing the line with `#`.
@@ -36,7 +36,7 @@ featured: false
 links:
 - icon: images
   icon_pack: fas
-  name: "Slides"
+  name: "Présentation"
   url: https://jplecavalier.github.io/r-quebec-2017/20170526_r_a_quebec.html
 
 # Markdown Slides (optional).
@@ -57,8 +57,6 @@ links:
 # Enable math on this page?
 math: false
 ---
-
-*Please note that this talk was given in French.*
 
 La classe prédestinée à stocker des données structurées en <i class="fab fa-r-project"></i> est le `data.frame`. Conformément à chaque classe développée dans
 le coeur de <i class="fab fa-r-project"></i>, on ne peut accéder à un objet de classe `data.frame` directement en référence. On doit créer une copie de l’objet
