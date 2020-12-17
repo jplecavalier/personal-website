@@ -60,8 +60,6 @@ links:
 math: false
 ---
 
-*Please note that this talk was given in French.*
-
 Bien que l'utilisation des langages de programmation *open-source* soit de plus en plus acceptée au sein d'organisations historiquement craintives, on entend
 souvent des critiques face à l'évolution rapide de ces langages entraînant un manque de stabilité dans un contexte professionnel. Certaines compagnies ont
 d'ailleurs lancé des produits un peu plus conventionnels pour faciliter l'intégration de **R** en entreprise. J'en conviens, certaines de ces solution
