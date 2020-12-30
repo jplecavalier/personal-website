@@ -3,6 +3,16 @@ ul.share {
   justify-content: left;
 }
 
+ul.share li i {
+  opacity:0.4;
+  transition: opacity 0.5s;
+}
+
+ul.share li:hover i {
+  transform: initial;
+  opacity: 1;
+}
+
 // Make article preview bold-italic
 .article-preview {
   font-weight: bold;
@@ -13,4 +23,17 @@ ul.share {
 .emoji {
   font-weight: normal;
   font-style: normal;
+}
+
+// Author's network icons style
+.network-icon > li > a {
+  color: $sta-primary;
+}
+
+.network-icon > li > a:hover {
+  color: $sta-primary-dark;
+}
+
+.network-icon > li:hover {
+  transform: scale(1.05);
 }
