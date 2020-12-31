@@ -1,2 +1,11 @@
-- id: btn_slides
-  translation: Présentation
+# Pages widget
+
+- id: more_pages
+  translation: Voir tout
+
+- id: more_posts
+  translation: Voir tous les articles de blogue
+
+- id: more_talks
+  translation: Voir tous les ateliers & conférences
+  
