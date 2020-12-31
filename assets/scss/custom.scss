@@ -25,15 +25,6 @@ ul.share li:hover i {
   font-style: normal;
 }
 
-// Author's network icons style
-.network-icon > li > a {
-  color: $sta-primary;
-}
-
-.network-icon > li > a:hover {
-  color: $sta-primary-dark;
-}
-
 .network-icon > li:hover {
   transform: scale(1.05);
 }

@@ -19,4 +19,4 @@ home_section_even = "rgb(247, 247, 247)"
 
 # Links
 link = "#eb0000"
-link_hover = "#eb0000"
+link_hover = "#b80000"
