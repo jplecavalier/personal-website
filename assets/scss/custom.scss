@@ -1,4 +1,4 @@
-// Left-justify sharing
+// Sharing buttons
 ul.share {
   justify-content: left;
 }
@@ -25,6 +25,12 @@ ul.share li:hover i {
   font-style: normal;
 }
 
+// Authors' social network buttons
 .network-icon > li:hover {
   transform: scale(1.05);
+}
+
+// Fix word-wrap bug on Safari
+pre code {
+  word-wrap:normal;
 }
