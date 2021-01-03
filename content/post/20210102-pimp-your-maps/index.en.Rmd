@@ -1,0 +1,25 @@
+---
+title: "Pimp your maps : Introduction"
+authors:
+  - jplecavalier
+date: 2020-12-13
+tags:
+  - r
+  - r-spatial
+  - leaflet
+  - sf
+image:
+  caption: "[Image by Pexels from Pixabay](https://pixabay.com/photos/treasure-map-navigation-map-1850653/)"
+  focal_point: "center"
+output:
+  blogdown::html_page:
+    css: "/css/custom.css"
+    
+summary: "Insert summary here"
+---
+
+Insert preview here
+
+<!--more-->
+
+Insert content here
