@@ -19,8 +19,8 @@ links:
 output:
   blogdown::html_page:
     css: "/css/custom.css"
-    
 summary: "Le but de cet article est d'expliquer comment faire des cartes interactives ayant une allure professionnelle en R."
+reading_time: 9
 ---
 
 Vous est-il déjà arrivé d'être fasciné par l'élégance d'une carte? J'en conviens, pour la majorité d'entre nous (j'en connais qui seraient en désaccord
@@ -35,9 +35,9 @@ Le but de cet article, comme son titre le laisse sous-entendre, est de vous donn
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment  = "#>",
-  message  = FALSE,
-  warning  = FALSE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE,
   fig.path = "figs/"
 )
 
@@ -46,86 +46,85 @@ options(datatable.print.nrows=10L)
 
 ## Données utilisées {#donnees-utilisees}
 
-Les différents exemples qui suivront dans l'article illustrent le revenu total médian des ménages en 2015 pour les divisions de recensement de Québec et Lévis.
-Ces données sont ouvertes et disponibles [sur le site de Statistiques Canada](https://www12.statcan.gc.ca/census-recensement/2016/dp-pd/prof/index.cfm?Lang=F).
-Comme il n'est pas dans la portée d'apprendre à traiter spécifiquement ces données de recensement, j'ai inclus l'ensemble des données requises pour reproduire
-les exemples de l'article. Vous pouvez facilement les télécharger en cliquant [ici](data.zip).
+Les différents exemples qui suivront dans l'article illustrent le revenu total médian des ménages en 2015 pour la division de recensement de Québec. Ces
+données sont ouvertes et disponibles [sur le site de Statistiques Canada](https://www12.statcan.gc.ca/census-recensement/2016/dp-pd/index-fra.cfm). Comme il
+n'est pas dans la portée d'apprendre à traiter spécifiquement ces données de recensement, j'ai inclus l'ensemble des données requises pour reproduire les
+exemples de l'article, déjà nettoyées et prêtes à être utilisées. Vous pouvez facilement les télécharger en cliquant [ici](data.zip).
 
 Les fichiers inclus sont :
 
-- `cd_qclevis.shp`
-- `ada_qclevis.shp`
-- `da_qclevis.shp`
-- `hydro_qclevis.shp`
-- `medincome_qclevis.csvy`
+- `ada_qc.shp` : Limites des aires de diffusions agrégées;
+- `da_qc.shp` : Limites des aires de diffusions;
+- `hydro_qc.shp` : Limites hydrographiques;
+- `medincome_qc.csvy` : Revenu total médian des ménages en 2015.
 
 On charge donc ceux-ci en mémoire. Vous verrez dans le bloc de code ci-dessous qu'on utilisera le *package*
 [`data.table`](https://rdatatable.gitlab.io/data.table/) pour la gestion des données. Les colonnes spatiales seront de classe `sfc` définie dans le *package*
 [`sf`](https://r-spatial.github.io/sf/). Prendre note qu'il y aurait plusieurs autres manières de travailler, comme par exemple utiliser directement la classe
-`sf` pour la gestion des données.
+`sf` pour la gestion des données. Il ne s'agit vraiment que d'une préférence personnelle.
 
 ```{r load_data}
-# On charge les packages
+# Charger les packages
 library(data.table)
 library(sf)
 
-# On lit les couches spatiales
-cd_qclevis <- read_sf("data/cd_qclevis.shp") %>% setDT()
-ada_qclevis <- read_sf("data/ada_qclevis.shp") %>% setDT()
-da_qclevis <- read_sf("data/da_qclevis.shp") %>% setDT()
-hydro_qclevis <- read_sf("data/hydro_qclevis.shp") %>% setDT()
+# Lire les couches spatiales
+ada_qc <- read_sf("data/ada_qc.shp") %>% setDT()
+da_qc <- read_sf("data/da_qc.shp") %>% setDT()
+hydro_qc <- read_sf("data/hydro_qc.shp") %>% setDT()
 
-# On lit les données sur le revenu total médian des ménages
-medincome_qclevis <- fread("data/medincome_qclevis.csvy", yaml=TRUE)
+# Lire les données sur le revenu total médian des ménages
+medincome_qc <- fread("data/medincome_qc.csvy", yaml=TRUE)
 ```
 
-On affiche ensuite ce qu'il y a dans les objets `ada_qclevis` et `medincome_qclevis`.
+On affiche ensuite ce qu'il y a dans les objets `ada_qc` et `medincome_qc`.
 
 ```{r print_ada}
-ada_qclevis[]
+ada_qc[]
 
-medincome_qclevis[]
+medincome_qc[]
 ```
 
 Afin d'être en mesure de créer une carte contenant les informations de revenu moyen, on doit combiner l'information spatiale et tabulaire dans la même table.
-Pour ce faire, on utilise la syntaxe de jointure par référence de [`data.table`](https://rdatatable.gitlab.io/data.table/). On affiche ensuite le résultat.
+Pour ce faire, on utilise la syntaxe de fusion par référence de [`data.table`](https://rdatatable.gitlab.io/data.table/). On affiche ensuite le résultat.
 
 ```{r merge_data}
-# On fait la jointure
-#cd_qclevis[medincome_qclevis[type=="cd"], med_income:=med_income, on=c(CDUID="id")]
-ada_qclevis[medincome_qclevis[type=="ada"], med_income:=med_income, on=c(ADAUID="id")]
-#da_qclevis[medincome_qclevis[type=="da"], med_income:=med_income, on=c(DAUID="id")]
+# Faire la fusion
+ada_qc[medincome_qc[type=="ada"], med_income:=med_income, on=c(ADAUID="id")]
+da_qc[medincome_qc[type=="da"], med_income:=med_income, on=c(DAUID="id")]
 
-# On affiche le résultat
-ada_qclevis[]
+# Afficher le résultat pour ada_qc
+ada_qc[]
 ```
 
-On a maintenant tout ce dont on a de besoin pour créer des cartes.
+On a maintenant tout ce dont on a de besoin pour créer une carte illustrant le revenu total médian des ménages en 2015 par aire de diffusion agrégée.
 
 ## Carte de base
 
-Avant d'apprendre à *pimper* nos cartes, on commence par produire une carte interactive de base avec le *package*
-[`leaflet`](https://rstudio.github.io/leaflet/). Je vous invite à consulter la documentation du *package* pour comprendre l'effet des différentes fonctions.
+Avant d'apprendre à *pimper* une carte interactive, on commence par en produire une de base avec le *package* [`leaflet`](https://rstudio.github.io/leaflet/).
+Je vous invite à consulter la documentation du *package* pour comprendre l'effet des différentes fonctions et leurs arguments respectifs.
 
 Le seul point sur lequel j'insisterai est la valeur de l'argument `data` de la fonction `addPolygons()`. Vous remarquerez que j'ai transformé le `data.table`
 en objet de classe `sf` (à l'aide de la fonction `st_as_sf()`) et que je l'ai reprojeté en longitude/latitude (à l'aide de la fonction `st_transform()`). Ces
 deux étapes sont nécessaires pour faciliter l'intégration avec [`leaflet`](https://rstudio.github.io/leaflet/).
 
 ```{r map_base}
-# On charge le package
+# Charger le package
 library(leaflet)
 
-# On crée une carte interactive de base
-leaflet(width="100%") %>%
+# Créer une carte interactive de base
+leaflet(
+  width = "100%"
+) %>%
   addTiles() %>%
   addPolygons(
-    data        = ada_qclevis %>% st_as_sf() %>% st_transform(4326L),
-    weight      = 1L,
-    color       = gray(0.3),
-    opacity     = 1,
-    fillColor   = ~colorNumeric(
+    data = ada_qc %>% st_as_sf() %>% st_transform(4326L),
+    weight = 1L,
+    color = gray(0.3),
+    opacity = 1,
+    fillColor = ~colorNumeric(
       palette = "Greens",
-      domain  = range(med_income)
+      domain = range(med_income)
     )(med_income),
     fillOpacity = 0.5
   )
@@ -133,11 +132,13 @@ leaflet(width="100%") %>%
 
 Cette carte est efficace pour illustrer nos données, mais pourrait facilement être améliorée à l'aide de quelques astuces simples.
 
+![](https://media.giphy.com/media/W3a0zO282fuBpsqqyD/giphy.gif)
+
 ## Suggestions d'améliorations
 
-Chacune des améliorations listées dans cette section peut être incorporée à une carte interactive de manière indépendante. Tout dépendamment du contexte,
-certains astuces seront plus bénéfiques que d'autres, il n'y a pas de recette universelle. Pour le bien de l'article, les améliorations seront présentées de
-manières cumulatives, c'est-à-dire que la deuxième amélioration présentée sera construite par-dessus la première et ainsi de suite.
+Chacune des améliorations listées dans cette section peut être incorporée à une carte interactive de manière indépendante. En fonction du contexte, certaines
+astuces seront plus bénéfiques que d'autres, il n'y a pas de recette universelle. On les présente donc successivement et on créera ensuite une carte *pimpée*
+les incluant toutes dans la section suivante.
 
 ### Fond de carte
 
@@ -151,119 +152,179 @@ Un autre point qu'on peut facilement améliorer avec les tuiles de fond de carte
 tuiles, il devient difficile de lire les étiquettes. Le problème devient encore pire lorsqu'on augmente l'opacité des polygones. La solution pour contourner ce
 problème est d'afficher la couche de base en arrière-plan, les étiquettes au premier plan et les polygones en sandwich entre les deux.
 
+![](https://media.giphy.com/media/IyxJUp0tZzFzuOAgns/giphy.gif)
+
 Pour ce faire, on va créer trois panneaux de carte avec la fonction `addMapPane()`. L'argument `zIndex` permet de spécifier le niveau de profondeur du panneau.
 Plus l'argument `zIndex` est élevé, plus la couche sera vers l'avant.
-
-En appliquant ces deux conseils, on obtient la carte suivante.
-
-```{r map_tiles}
-# On améliore les tuiles de fond de carte
-leaflet(width="100%") %>%
-  addMapPane("background", 100) %>%
-  addMapPane("med_income", 400) %>%
-  addMapPane("labels", 500) %>%
-  addProviderTiles(
-    provider = providers$CartoDB.PositronNoLabels,
-    options  = pathOptions(pane = "background")
-  ) %>%
-  addProviderTiles(
-    provider = providers$CartoDB.PositronOnlyLabels,
-    options  = pathOptions(pane = "labels")
-  ) %>%
-  addPolygons(
-    data        = ada_qclevis %>% st_as_sf() %>% st_transform(4326L),
-    weight      = 1L,
-    color       = gray(0.3),
-    opacity     = 1,
-    fillColor   = ~colorNumeric(
-      palette = "Greens",
-      domain  = range(med_income)
-    )(med_income),
-    fillOpacity = 0.5,
-    options     = pathOptions(
-      pane = "med_income"
-    )
-  )
-```
 
 ### Domaine de valeurs
 
 Jusqu'à maintenant, on ne s'est pas posé de questions par rapport à l'échelle de couleurs qui est utilisée sur la carte. J'imagine que vous avez déduit qu'on
 a spécifié qu'on voulait une échelle de différents verts avec l'argument `palette` qui prend la valeur `"Greens"`. Les plus observateurs auront aussi remarqué
 qu'on a spécifié l'étendue de cette échelle à l'aide de l'argument `domain`. Comme la fonction `range()` retourne les valeurs minimale et maximale de son
-argument, l'échelle qu'on a défini est linéaire entre le minimum (`r formatC(min(ada_qclevis[, med_income]), format="d", big.mark=" ")` \$) et le maximum
-(`r formatC(max(ada_qclevis[, med_income]), format="d", big.mark=" ")` \$) des revenus médians par aire de diffusion agrégée.
+argument, l'échelle qu'on a défini est linéaire entre le minimum (`r formatC(min(ada_qc[, med_income]), format="d", big.mark=" ")` \$) et le maximum
+(`r formatC(max(ada_qc[, med_income]), format="d", big.mark=" ")` \$) des revenus médians par aire de diffusion agrégée.
 
 Évidemment, cette définition d'échelle n'est pas toujours optimale. Ci-dessous, on affiche la distribution des revenus médians par aire de diffusion agrégée à
-l'aide du package [`ggplot2`](https://ggplot2.tidyverse.org/).
+l'aide du package [`ggplot2`](https://ggplot2.tidyverse.org/). On attache aussi le *package* [`scales`](https://scales.r-lib.org) (déjà chargé avec
+[`ggplot2`](https://ggplot2.tidyverse.org/), mais non attaché) pour la gestion des différents formats à afficher.
 
 ```{r hist_domain}
-# On charge le package
+# Charger les packages
 library(ggplot2)
+library(scales)
 
-# On crée un histogramme
+# Créer l'histogramme
 ggplot(
-  data    = ada_qclevis,
+  data = ada_qc,
   mapping = aes(
     x = med_income
   )
 ) +
   geom_bar() +
   scale_x_binned(
-    labels = scales::label_number(),
+    labels = label_number(),
   ) +
   labs(
-    x       = "Revenu total médian des ménages en 2015 ($)",
-    y       = "Nombre d'aires de diffusion aggrégée",
-    caption = "Division de recensement de Québec et Lévis"
+    x = "Revenu total médian des ménages en 2015 ($)",
+    y = "Nombre d'aires de diffusion agrégées",
+    caption = "Division de recensement de Québec"
   ) +
   theme_minimal()
 ```
 
 En analysant cet histogramme, on voit qu'une échelle linéaire entre 30 000 \$ 100 000 \$ donnerait probablement un meilleur résultat. Les valeurs à l'extérieur
-de cet intervalle seront tronquées à l'aide de la fonction `squish()` du package [`scales`](https://scales.r-lib.org) (déjà chargé avec
-[`ggplot2`](https://ggplot2.tidyverse.org/), mais non attaché).
+de cet intervalle seront tronquées à l'aide de la fonction `squish()`.
 
-On crée donc une nouvelle carte en y apportant cet ajustement.
-
-```{r map_domain}
+```{r med_income_domain}
 # On définit le domaine de valeur sélectionné
 med_income_domain <- c(30000L, 100000L)
-
-# On améliore le domaine de valeurs
-leaflet(width="100%") %>%
-  addMapPane("background", 100) %>%
-  addMapPane("med_income", 400) %>%
-  addMapPane("labels", 500) %>%
-  addProviderTiles(
-    provider = providers$CartoDB.PositronNoLabels,
-    options  = pathOptions(pane = "background")
-  ) %>%
-  addProviderTiles(
-    provider = providers$CartoDB.PositronOnlyLabels,
-    options  = pathOptions(pane = "labels")
-  ) %>%
-  addPolygons(
-    data        = ada_qclevis %>% st_as_sf() %>% st_transform(4326L),
-    weight      = 1L,
-    color       = gray(0.3),
-    opacity     = 1,
-    fillColor   = ~colorNumeric(
-      palette = "Greens",
-      domain  = med_income_domain
-    )(scales::squish(med_income, med_income_domain)),
-    fillOpacity = 0.5,
-    options     = pathOptions(
-      pane = "med_income"
-    )
-  )
 ```
 
 ### Interactions avec le curseur
 
+Une autre amélioration possible est de personnaliser l'interaction à l'aide du curseur. Plusieurs actions sont possibles, mais on se contentera de montrer
+l'effet de mettre en surbrillance et d'afficher une étiquette lorsqu'on touche à un polygone. On utilisera l'argument `highlightOptions` pour la surbrillance
+et les arguments `label` et `labelOptions` pour les étiquettes.
+
+Pour donner un effet de surbrillance intéressant, on va augmenter l'opacité du remplissage et foncir et épaissir les contours du polygone. Pous les étiquettes,
+on utilisera de simples chaînes de caractères pour l'exemple. Pour avoir un contrôle total, on aurait aussi plutôt pu fournir directement le code html à
+afficher au passage de la souris. J'invite les lecteurs un peu plus expérimentés à l'essayer!
+
 ### Découpage hydrographique
+
+Cette suggestion d'amélioration est parfois intéressante, mais souvent moins importante que celles présentées jusqu'à maintenant. Tel que suggéré par le
+sous-titre, on va découper le réseau hydrographique de notre couche de polygones.
+
+On commence par créer un objet spatial contenant une union de tous les cours d'eau présents dans la région d'intérêt à l'aide de la fonction `st_union()`. On
+découpe ensuite les polygones à l'aide de la fonction `st_difference()`.
+
+```{r data_nohydro}
+# Créer l'objet hydro_qc_union
+hydro_qc_union <- hydro_qc[, st_union(geometry)]
+
+# Découper les polygones
+ada_qc[, geometry_nohydro:=st_difference(geometry, hydro_qc_union)]
+da_qc[, geometry_nohydro:=st_difference(geometry, hydro_qc_union)]
+```
 
 ### Granularité dynamique
 
+La dernière suggestion d'amélioration proposée est celle d'une granularité dynamique de la couche de polygones déterminée en fonction du niveau de zoom. Les
+polygones illustrés représenteront la granularité suivante :
+
+- Niveau de zoom entre 10 et 12 : aires de diffusion agrégées;
+- Niveau de zoom entre 13 et 15 : aires de diffusion.
+
+Afin d'éviter de répéter la fonction `addPolygons()` avec ses nombreux arguments, on créera une fonction `addMedIncomePolygons()` qui définira les arguments
+constants d'une couche de polygones à l'autre.
+
+```{r function_addMedIncomePolygons}
+# Définir la fonction addMedIncomePolygons()
+addMedIncomePolygons <- function(map, data, group) {
+  addPolygons(
+    map = map,
+    data = data %>% st_as_sf(sf_column_name="geometry_nohydro") %>% st_transform(4326L),
+    group = group,
+    weight = 1L,
+    color = gray(0.3),
+    opacity = 1,
+    fillColor = ~colorNumeric(
+      palette = "Greens",
+      domain = med_income_domain
+    )(squish(med_income, med_income_domain)),
+    fillOpacity = 0.5,
+    highlightOptions = highlightOptions(
+      weight = 3,
+      color = "black",
+      fillOpacity = 0.7,
+      bringToFront = TRUE
+    ),
+    label = ~dollar(
+      x = med_income,
+      prefix = NULL,
+      suffix = " $",
+      big.mark = " "
+    ),
+    labelOptions = labelOptions(
+      direction = "top",
+      offset = c(0, -5)
+    ),
+    options = pathOptions(
+      pane = "med_income"
+    )
+  )
+}
+```
+
+## On met tout ça ensemble
+
+Si on applique toutes les suggestions proposées dans la section précédente, on obtient la carte ci-dessous.
+
+```{r map_dynamiclayer}
+# Créer une carte pimpée
+leaflet(
+  width = "100%",
+  options = leafletOptions(
+    minZoom = 10L,
+    maxZoom = 15L
+  )
+) %>%
+  addMapPane(
+    name = "background",
+    zIndex = 100L
+  ) %>%
+  addMapPane(
+    name = "med_income",
+    zIndex = 400L
+  ) %>%
+  addMapPane(
+    name = "labels",
+    zIndex = 500L
+  ) %>%
+  addProviderTiles(
+    provider = providers$CartoDB.PositronNoLabels,
+    options = pathOptions(
+      pane = "background"
+    )
+  ) %>%
+  addProviderTiles(
+    provider = providers$CartoDB.PositronOnlyLabels,
+    options = pathOptions(
+      pane = "labels"
+    )
+  ) %>%
+  addMedIncomePolygons(ada_qc, "ada") %>%
+  addMedIncomePolygons(da_qc, "da") %>%
+  groupOptions("ada", 10:12) %>%
+  groupOptions("da", 13:15)
+```
+
+Beaucoup mieux, n'est-ce pas?
+
+![](https://media.giphy.com/media/eJS4WUQ7MkNKx3qxPN/giphy.gif)
 
 ## Conclusion
+
+Ça faisait déjà plusieurs fois que des collègues m'avaient demandé d'écrire un article avec quelques-uns de mes trucs personnels pour créer de belles cartes en
+<i class="fab fa-r-project"></i>. J'espère que celui-ci vous a plu et, surtout, qu'il vous sera utile lorsque vous créerez vos prochaines cartes!
