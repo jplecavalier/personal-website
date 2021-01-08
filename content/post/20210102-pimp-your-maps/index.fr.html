@@ -72,7 +72,7 @@ da_qc &lt;- read_sf(&quot;data/da_qc.shp&quot;) %&gt;% setDT()
 hydro_qc &lt;- read_sf(&quot;data/hydro_qc.shp&quot;) %&gt;% setDT()
 
 # Lire les données sur le revenu total médian des ménages
-medincome_qc &lt;- fread(&quot;data/medincome_qc.csvy&quot;, yaml=TRUE)</code></pre>
+medincome_qc &lt;- fread(&quot;data/medincome_qc.csvy&quot;, yaml = TRUE)</code></pre>
 <p>On affiche ensuite ce qu’il y a dans les objets <code>ada_qc</code> et <code>medincome_qc</code>.</p>
 <pre class="r"><code>ada_qc[]
 #&gt;       ADAUID geometry
@@ -104,8 +104,8 @@ medincome_qc[]
 <p>Afin d’être en mesure de créer une carte contenant les informations de revenu moyen, on doit combiner l’information spatiale et tabulaire dans la même table.
 Pour ce faire, on utilise la syntaxe de fusion par référence de <a href="https://rdatatable.gitlab.io/data.table/"><code>data.table</code></a>. On affiche ensuite le résultat.</p>
 <pre class="r"><code># Faire la fusion
-ada_qc[medincome_qc[type==&quot;ada&quot;], med_income:=med_income, on=c(ADAUID=&quot;id&quot;)]
-da_qc[medincome_qc[type==&quot;da&quot;], med_income:=med_income, on=c(DAUID=&quot;id&quot;)]
+ada_qc[medincome_qc[type == &quot;ada&quot;], med_income := med_income, on = c(ADAUID = &quot;id&quot;)]
+da_qc[medincome_qc[type == &quot;da&quot;], med_income := med_income, on = c(DAUID = &quot;id&quot;)]
 
 # Afficher le résultat pour ada_qc
 ada_qc[]
@@ -208,7 +208,7 @@ ggplot(
 <p>En analysant cet histogramme, on voit qu’une échelle linéaire entre 30 000 $ 100 000 $ donnerait probablement un meilleur résultat. Les valeurs à l’extérieur
 de cet intervalle seront tronquées à l’aide de la fonction <code>squish()</code>.</p>
 <pre class="r"><code># On définit le domaine de valeur sélectionné
-med_income_domain &lt;- c(30000L, 100000L)</code></pre>
+med_income_domain &lt;- c(30L, 100L) * 1000L</code></pre>
 </div>
 <div id="interactions-avec-le-curseur" class="section level3">
 <h3>Interactions avec le curseur</h3>
@@ -229,8 +229,8 @@ découpe ensuite les polygones à l’aide de la fonction <code>st_difference()<
 hydro_qc_union &lt;- hydro_qc[, st_union(geometry)]
 
 # Découper les polygones
-ada_qc[, geometry_nohydro:=st_difference(geometry, hydro_qc_union)]
-da_qc[, geometry_nohydro:=st_difference(geometry, hydro_qc_union)]</code></pre>
+ada_qc[, geometry_nohydro := st_difference(geometry, hydro_qc_union)]
+da_qc[, geometry_nohydro := st_difference(geometry, hydro_qc_union)]</code></pre>
 </div>
 <div id="granularité-dynamique" class="section level3">
 <h3>Granularité dynamique</h3>
@@ -246,7 +246,7 @@ constants d’une couche de polygones à l’autre.</p>
 addMedIncomePolygons &lt;- function(map, data, group) {
   addPolygons(
     map = map,
-    data = data %&gt;% st_as_sf(sf_column_name=&quot;geometry_nohydro&quot;) %&gt;% st_transform(4326L),
+    data = data %&gt;% st_as_sf(sf_column_name = &quot;geometry_nohydro&quot;) %&gt;% st_transform(4326L),
     group = group,
     weight = 1L,
     color = gray(0.3),

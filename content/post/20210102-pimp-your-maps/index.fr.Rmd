@@ -41,7 +41,7 @@ knitr::opts_chunk$set(
   fig.path = "figs-fr/"
 )
 
-options(datatable.print.nrows=10L)
+options(datatable.print.nrows = 10L)
 ```
 
 ## Données utilisées {#donnees-utilisees}
@@ -74,7 +74,7 @@ da_qc <- read_sf("data/da_qc.shp") %>% setDT()
 hydro_qc <- read_sf("data/hydro_qc.shp") %>% setDT()
 
 # Lire les données sur le revenu total médian des ménages
-medincome_qc <- fread("data/medincome_qc.csvy", yaml=TRUE)
+medincome_qc <- fread("data/medincome_qc.csvy", yaml = TRUE)
 ```
 
 On affiche ensuite ce qu'il y a dans les objets `ada_qc` et `medincome_qc`.
@@ -90,8 +90,8 @@ Pour ce faire, on utilise la syntaxe de fusion par référence de [`data.table`]
 
 ```{r merge_data}
 # Faire la fusion
-ada_qc[medincome_qc[type=="ada"], med_income:=med_income, on=c(ADAUID="id")]
-da_qc[medincome_qc[type=="da"], med_income:=med_income, on=c(DAUID="id")]
+ada_qc[medincome_qc[type == "ada"], med_income := med_income, on = c(ADAUID = "id")]
+da_qc[medincome_qc[type == "da"], med_income := med_income, on = c(DAUID = "id")]
 
 # Afficher le résultat pour ada_qc
 ada_qc[]
@@ -162,8 +162,8 @@ Plus l'argument `zIndex` est élevé, plus la couche sera vers l'avant.
 Jusqu'à maintenant, on ne s'est pas posé de questions par rapport à l'échelle de couleurs qui est utilisée sur la carte. J'imagine que vous avez déduit qu'on
 a spécifié qu'on voulait une échelle de différents verts avec l'argument `palette` qui prend la valeur `"Greens"`. Les plus observateurs auront aussi remarqué
 qu'on a spécifié l'étendue de cette échelle à l'aide de l'argument `domain`. Comme la fonction `range()` retourne les valeurs minimale et maximale de son
-argument, l'échelle qu'on a défini est linéaire entre le minimum (`r formatC(min(ada_qc[, med_income]), format="d", big.mark=" ")` \$) et le maximum
-(`r formatC(max(ada_qc[, med_income]), format="d", big.mark=" ")` \$) des revenus médians par aire de diffusion agrégée.
+argument, l'échelle qu'on a défini est linéaire entre le minimum (`r formatC(min(ada_qc[, med_income]), format = "d", big.mark = " ")` \$) et le maximum
+(`r formatC(max(ada_qc[, med_income]), format = "d", big.mark = " ")` \$) des revenus médians par aire de diffusion agrégée.
 
 Évidemment, cette définition d'échelle n'est pas toujours optimale. Ci-dessous, on affiche la distribution des revenus médians par aire de diffusion agrégée à
 l'aide du package [`ggplot2`](https://ggplot2.tidyverse.org/). On attache aussi le *package* [`scales`](https://scales.r-lib.org) (déjà chargé avec
@@ -198,7 +198,7 @@ de cet intervalle seront tronquées à l'aide de la fonction `squish()`.
 
 ```{r med_income_domain}
 # On définit le domaine de valeur sélectionné
-med_income_domain <- c(30000L, 100000L)
+med_income_domain <- c(30L, 100L) * 1000L
 ```
 
 ### Interactions avec le curseur
@@ -224,8 +224,8 @@ découpe ensuite les polygones à l'aide de la fonction `st_difference()`.
 hydro_qc_union <- hydro_qc[, st_union(geometry)]
 
 # Découper les polygones
-ada_qc[, geometry_nohydro:=st_difference(geometry, hydro_qc_union)]
-da_qc[, geometry_nohydro:=st_difference(geometry, hydro_qc_union)]
+ada_qc[, geometry_nohydro := st_difference(geometry, hydro_qc_union)]
+da_qc[, geometry_nohydro := st_difference(geometry, hydro_qc_union)]
 ```
 
 ### Granularité dynamique
@@ -244,7 +244,7 @@ constants d'une couche de polygones à l'autre.
 addMedIncomePolygons <- function(map, data, group) {
   addPolygons(
     map = map,
-    data = data %>% st_as_sf(sf_column_name="geometry_nohydro") %>% st_transform(4326L),
+    data = data %>% st_as_sf(sf_column_name = "geometry_nohydro") %>% st_transform(4326L),
     group = group,
     weight = 1L,
     color = gray(0.3),
