@@ -126,7 +126,7 @@ ada_qc[]
 <div id="carte-de-base" class="section level2">
 <h2>Carte de base</h2>
 <p>Avant d’apprendre à <em>pimper</em> une carte interactive, on commence par en produire une de base avec le <em>package</em> <a href="https://rstudio.github.io/leaflet/"><code>leaflet</code></a>.
-Je vous invite à consulter la documentation du <em>package</em> pour comprendre l’effet des différentes fonctions et leurs arguments respectifs.</p>
+Je vous invite à consulter la documentation du <em>package</em> pour comprendre l’effet des différentes fonctions et de leurs arguments respectifs.</p>
 <p>Le seul point sur lequel j’insisterai est la valeur de l’argument <code>data</code> de la fonction <code>addPolygons()</code>. Vous remarquerez que j’ai transformé le <code>data.table</code>
 en objet de classe <code>sf</code> (à l’aide de la fonction <code>st_as_sf()</code>) et que je l’ai reprojeté en longitude/latitude (à l’aide de la fonction <code>st_transform()</code>). Ces
 deux étapes sont nécessaires pour faciliter l’intégration avec <a href="https://rstudio.github.io/leaflet/"><code>leaflet</code></a>.</p>
@@ -215,7 +215,7 @@ med_income_domain &lt;- c(30000L, 100000L)</code></pre>
 <p>Une autre amélioration possible est de personnaliser l’interaction à l’aide du curseur. Plusieurs actions sont possibles, mais on se contentera de montrer
 l’effet de mettre en surbrillance et d’afficher une étiquette lorsqu’on touche à un polygone. On utilisera l’argument <code>highlightOptions</code> pour la surbrillance
 et les arguments <code>label</code> et <code>labelOptions</code> pour les étiquettes.</p>
-<p>Pour donner un effet de surbrillance intéressant, on va augmenter l’opacité du remplissage et foncir et épaissir les contours du polygone. Pous les étiquettes,
+<p>Pour donner un effet de surbrillance intéressant, on va augmenter l’opacité du remplissage et foncir et épaissir les contours du polygone. Pour les étiquettes,
 on utilisera de simples chaînes de caractères pour l’exemple. Pour avoir un contrôle total, on aurait aussi plutôt pu fournir directement le code html à
 afficher au passage de la souris. J’invite les lecteurs un peu plus expérimentés à l’essayer!</p>
 </div>
@@ -325,6 +325,6 @@ leaflet(
 </div>
 <div id="conclusion" class="section level2">
 <h2>Conclusion</h2>
-<p>Ça faisait déjà plusieurs fois que des collègues m’avaient demandé d’écrire un article avec quelques-uns de mes trucs personnels pour créer de belles cartes en
+<p>Plusieurs de mes collègues m’avaient déjà demandé d’écrire un article avec quelques-uns de mes trucs personnels pour créer de belles cartes en
 <i class="fab fa-r-project"></i>. J’espère que celui-ci vous a plu et, surtout, qu’il vous sera utile lorsque vous créerez vos prochaines cartes!</p>
 </div>

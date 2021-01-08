@@ -102,7 +102,7 @@ On a maintenant tout ce dont on a de besoin pour créer une carte illustrant le 
 ## Carte de base
 
 Avant d'apprendre à *pimper* une carte interactive, on commence par en produire une de base avec le *package* [`leaflet`](https://rstudio.github.io/leaflet/).
-Je vous invite à consulter la documentation du *package* pour comprendre l'effet des différentes fonctions et leurs arguments respectifs.
+Je vous invite à consulter la documentation du *package* pour comprendre l'effet des différentes fonctions et de leurs arguments respectifs.
 
 Le seul point sur lequel j'insisterai est la valeur de l'argument `data` de la fonction `addPolygons()`. Vous remarquerez que j'ai transformé le `data.table`
 en objet de classe `sf` (à l'aide de la fonction `st_as_sf()`) et que je l'ai reprojeté en longitude/latitude (à l'aide de la fonction `st_transform()`). Ces
@@ -207,7 +207,7 @@ Une autre amélioration possible est de personnaliser l'interaction à l'aide du
 l'effet de mettre en surbrillance et d'afficher une étiquette lorsqu'on touche à un polygone. On utilisera l'argument `highlightOptions` pour la surbrillance
 et les arguments `label` et `labelOptions` pour les étiquettes.
 
-Pour donner un effet de surbrillance intéressant, on va augmenter l'opacité du remplissage et foncir et épaissir les contours du polygone. Pous les étiquettes,
+Pour donner un effet de surbrillance intéressant, on va augmenter l'opacité du remplissage et foncir et épaissir les contours du polygone. Pour les étiquettes,
 on utilisera de simples chaînes de caractères pour l'exemple. Pour avoir un contrôle total, on aurait aussi plutôt pu fournir directement le code html à
 afficher au passage de la souris. J'invite les lecteurs un peu plus expérimentés à l'essayer!
 
@@ -326,5 +326,5 @@ Beaucoup mieux, n'est-ce pas?
 
 ## Conclusion
 
-Ça faisait déjà plusieurs fois que des collègues m'avaient demandé d'écrire un article avec quelques-uns de mes trucs personnels pour créer de belles cartes en
+Plusieurs de mes collègues m'avaient déjà demandé d'écrire un article avec quelques-uns de mes trucs personnels pour créer de belles cartes en
 <i class="fab fa-r-project"></i>. J'espère que celui-ci vous a plu et, surtout, qu'il vous sera utile lorsque vous créerez vos prochaines cartes!
