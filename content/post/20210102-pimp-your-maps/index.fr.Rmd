@@ -3,22 +3,27 @@ title: "Pimp tes cartes!"
 authors:
   - jplecavalier
 date: 2020-12-13
+
 tags:
   - r
   - r-spatial
   - leaflet
   - sf
+  
 image:
   caption: "[Image par Pexels de Pixabay](https://pixabay.com/fr/photos/carte-au-trésor-navigation-carte-1850653/)"
   focal_point: "center"
+  
 links:
 - icon: file-archive
   icon_pack: fas
   name: "Données"
   url: "data.zip"
+  
 output:
   blogdown::html_page:
     css: "/css/custom.css"
+    
 summary: "Le but de cet article est d'expliquer comment faire des cartes interactives ayant une allure professionnelle en R."
 reading_time: 9
 ---
