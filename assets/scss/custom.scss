@@ -39,3 +39,19 @@ pre code {
 .html-widget {
   margin: 0 0 1rem 0;
 }
+
+// Code formatting
+code {
+  color: $sta-link;
+  padding-left: .1em;
+	padding-right: .1em;
+}
+
+pre, code {
+	background-color: #F5F5F5 !important;
+}
+
+a code {
+  text-decoration: underline;
+  text-decoration-style: dashed;
+}
