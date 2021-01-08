@@ -34,3 +34,8 @@ ul.share li:hover i {
 pre code {
   word-wrap:normal;
 }
+
+// Add margin after htmlwidgets
+.html-widget {
+  margin: 0 0 1rem 0;
+}
