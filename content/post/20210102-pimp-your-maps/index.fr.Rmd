@@ -201,8 +201,8 @@ ggplot(
   theme_minimal()
 ```
 
-En analysant cet histogramme, on voit qu'une échelle linéaire entre 30 000 \$ 100 000 \$ donnerait probablement un meilleur résultat. Les valeurs à l'extérieur
-de cet intervalle seront tronquées à l'aide de la fonction `squish()`.
+En analysant cet histogramme, on voit qu'une échelle linéaire entre 30 000 \$ et 100 000 \$ donnerait probablement un meilleur résultat. Les valeurs à
+l'extérieur de cet intervalle seront tronquées à l'aide de la fonction `squish()`.
 
 ```{r med_income_domain}
 # On définit le domaine de valeur sélectionné
