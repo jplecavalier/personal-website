@@ -174,7 +174,7 @@ valeurs minimale et maximale de son argument, l'échelle qu'on a défini est lin
 (`r formatC(max(ada_qc[, med_income]), format = "d", big.mark = " ")` \$) des revenus médians par aire de diffusion agrégée.
 
 Évidemment, cette définition d'échelle n'est pas toujours optimale. Ci-dessous, on affiche la distribution des revenus médians par aire de diffusion agrégée à
-l'aide du package [`ggplot2`](https://ggplot2.tidyverse.org/). On attache aussi le *package* [`scales`](https://scales.r-lib.org) (déjà chargé avec
+l'aide du *package* [`ggplot2`](https://ggplot2.tidyverse.org/). On attache aussi le *package* [`scales`](https://scales.r-lib.org) (déjà chargé avec
 [`ggplot2`](https://ggplot2.tidyverse.org/), mais non attaché) pour la gestion des différents formats à afficher.
 
 ```{r hist_domain}
