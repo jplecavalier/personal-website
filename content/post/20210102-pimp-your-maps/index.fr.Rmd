@@ -102,7 +102,8 @@ da_qc[medincome_qc[type == "da"], med_income := med_income, on = c(DAUID = "id")
 ada_qc[]
 ```
 
-On a maintenant tout ce dont on a de besoin pour créer une carte illustrant le revenu total médian des ménages en 2015 par aire de diffusion agrégée.
+On a maintenant tout ce dont on a de besoin pour créer une carte illustrant le revenu total médian des ménages en 2015 pour l'ensemble des aires de diffusion
+agrégées de la division de recensement de Québec `r emoji("partying_face")`.
 
 ## Carte de base
 
@@ -148,9 +149,10 @@ les incluant toutes dans la section suivante.
 ### Fond de carte
 
 Dans l'exemple simple, on a utilisé les tuiles de fond de carte par défaut de la fonction `addTiles()`. Ces tuiles sont très complètes et présentent
-une panoplie d'informations. Souvent, c'est tout simplement trop. Je vous invite donc à choisir judicieusement vos fonds de carte pour mettre l'accent sur ce
-que vous cherchez vraiment à illustrer. Vous pouvez facilement voir les tuiles préprogrammées avec [`leaflet`](https://rstudio.github.io/leaflet/)
-[ici](https://leaflet-extras.github.io/leaflet-providers/preview/). Pour ma part, mes préférées sont **Positron** et **DarkMatter** du fournisseur **CartoDB**.
+une panoplie d'informations. Souvent, c'est tout simplement trop `r emoji("confounded")`. Je vous invite donc à choisir judicieusement vos fonds de carte pour
+mettre l'accent sur ce que vous cherchez vraiment à illustrer. Vous pouvez facilement voir les tuiles préprogrammées avec
+[`leaflet`](https://rstudio.github.io/leaflet/) [ici](https://leaflet-extras.github.io/leaflet-providers/preview/). Pour ma part, mes préférées sont
+**Positron** et **DarkMatter** du fournisseur **CartoDB**.
 
 Un autre point qu'on peut facilement améliorer avec les tuiles de fond de carte consiste à diviser en deux couches distinctes la couche de base et les
 étiquettes. Si vous n'aviez pas remarqué, allez jeter un coup d'oeil à la carte de la section précédente. Comme les polygones sont affichés par-dessus les
@@ -165,9 +167,10 @@ Plus l'argument `zIndex` est élevé, plus la couche sera vers l'avant.
 ### Domaine de valeurs
 
 Jusqu'à maintenant, on ne s'est pas posé de questions par rapport à l'échelle de couleurs qui est utilisée sur la carte. J'imagine que vous avez déduit qu'on
-a spécifié qu'on voulait une échelle de différents verts avec l'argument `palette` qui prend la valeur `"Greens"`. Les plus observateurs auront aussi remarqué
-qu'on a spécifié l'étendue de cette échelle à l'aide de l'argument `domain`. Comme la fonction `range()` retourne les valeurs minimale et maximale de son
-argument, l'échelle qu'on a défini est linéaire entre le minimum (`r formatC(min(ada_qc[, med_income]), format = "d", big.mark = " ")` \$) et le maximum
+a spécifié qu'on voulait une échelle de différents verts avec l'argument `palette` qui prend la valeur `"Greens"` `r emoji("money_mouth_face")`. Les plus
+observateurs auront aussi remarqué qu'on a spécifié l'étendue de cette échelle à l'aide de l'argument `domain`. Comme la fonction `range()` retourne les
+valeurs minimale et maximale de son argument, l'échelle qu'on a défini est linéaire entre le minimum
+(`r formatC(min(ada_qc[, med_income]), format = "d", big.mark = " ")` \$) et le maximum
 (`r formatC(max(ada_qc[, med_income]), format = "d", big.mark = " ")` \$) des revenus médians par aire de diffusion agrégée.
 
 Évidemment, cette définition d'échelle n'est pas toujours optimale. Ci-dessous, on affiche la distribution des revenus médians par aire de diffusion agrégée à
@@ -214,7 +217,7 @@ et les arguments `label` et `labelOptions` pour les étiquettes.
 
 Pour donner un effet de surbrillance intéressant, on va augmenter l'opacité du remplissage et foncir et épaissir les contours du polygone. Pour les étiquettes,
 on utilisera de simples chaînes de caractères pour l'exemple. Pour avoir un contrôle total, on aurait aussi plutôt pu fournir directement le code html à
-afficher au passage de la souris. J'invite les lecteurs un peu plus expérimentés à l'essayer!
+afficher au passage de la souris. J'invite les lecteurs un peu plus expérimentés (ou un peu plus *geeks* `r emoji("nerd_face")`) à l'essayer!
 
 ### Découpage hydrographique
 
@@ -331,5 +334,11 @@ Beaucoup mieux, n'est-ce pas?
 
 ## Conclusion
 
-Plusieurs de mes collègues m'avaient déjà demandé d'écrire un article avec quelques-uns de mes trucs personnels pour créer de belles cartes en
-<i class="fab fa-r-project"></i>. J'espère que celui-ci vous a plu et, surtout, qu'il vous sera utile lorsque vous créerez vos prochaines cartes!
+Ça fait plusieurs mois que j'avais en tête l'idée de créer un blogue portant sur différents sujets reliés à la science des données. Je ne prenais pas le temps
+de mettre ce plan à exécution, mais voilà qui est finalement fait `r emoji("smiley")`.
+
+Le sujet de mon premier article était une formalité puisque ça faisait déjà quelques fois que des collègues me demandaient de leur expliquer comment faire de
+belles cartes en <i class="fab fa-r-project"></i>. J'espère que celui-ci vous a plu et, surtout, qu'il vous sera utile lorsque vous créerez vos prochaines
+cartes.
+
+Si vous avez des suggestions pour de futurs articles, des sujets que vous aimeriez approfondir davantage, n'hésitez pas à m'en faire part `r emoji("hugs")`!

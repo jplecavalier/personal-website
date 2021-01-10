@@ -126,7 +126,8 @@ ada_qc[]
 #&gt; 68: 24230072  &lt;XY[1]&gt;     106445
 #&gt; 69: 24230073  &lt;XY[1]&gt;      53902
 #&gt; 70: 24230074  &lt;XY[1]&gt;      64329</code></pre>
-<p>On a maintenant tout ce dont on a de besoin pour créer une carte illustrant le revenu total médian des ménages en 2015 par aire de diffusion agrégée.</p>
+<p>On a maintenant tout ce dont on a de besoin pour créer une carte illustrant le revenu total médian des ménages en 2015 pour l’ensemble des aires de diffusion
+agrégées de la division de recensement de Québec <span class="emoji">🥳</span>.</p>
 </div>
 <div id="carte-de-base" class="section level2">
 <h2>Carte de base</h2>
@@ -167,9 +168,10 @@ les incluant toutes dans la section suivante.</p>
 <div id="fond-de-carte" class="section level3">
 <h3>Fond de carte</h3>
 <p>Dans l’exemple simple, on a utilisé les tuiles de fond de carte par défaut de la fonction <code>addTiles()</code>. Ces tuiles sont très complètes et présentent
-une panoplie d’informations. Souvent, c’est tout simplement trop. Je vous invite donc à choisir judicieusement vos fonds de carte pour mettre l’accent sur ce
-que vous cherchez vraiment à illustrer. Vous pouvez facilement voir les tuiles préprogrammées avec <a href="https://rstudio.github.io/leaflet/"><code>leaflet</code></a>
-<a href="https://leaflet-extras.github.io/leaflet-providers/preview/">ici</a>. Pour ma part, mes préférées sont <strong>Positron</strong> et <strong>DarkMatter</strong> du fournisseur <strong>CartoDB</strong>.</p>
+une panoplie d’informations. Souvent, c’est tout simplement trop <span class="emoji">😖</span>. Je vous invite donc à choisir judicieusement vos fonds de carte pour
+mettre l’accent sur ce que vous cherchez vraiment à illustrer. Vous pouvez facilement voir les tuiles préprogrammées avec
+<a href="https://rstudio.github.io/leaflet/"><code>leaflet</code></a> <a href="https://leaflet-extras.github.io/leaflet-providers/preview/">ici</a>. Pour ma part, mes préférées sont
+<strong>Positron</strong> et <strong>DarkMatter</strong> du fournisseur <strong>CartoDB</strong>.</p>
 <p>Un autre point qu’on peut facilement améliorer avec les tuiles de fond de carte consiste à diviser en deux couches distinctes la couche de base et les
 étiquettes. Si vous n’aviez pas remarqué, allez jeter un coup d’oeil à la carte de la section précédente. Comme les polygones sont affichés par-dessus les
 tuiles, il devient difficile de lire les étiquettes. Le problème devient encore pire lorsqu’on augmente l’opacité des polygones. La solution pour contourner ce
@@ -181,9 +183,10 @@ Plus l’argument <code>zIndex</code> est élevé, plus la couche sera vers l’
 <div id="domaine-de-valeurs" class="section level3">
 <h3>Domaine de valeurs</h3>
 <p>Jusqu’à maintenant, on ne s’est pas posé de questions par rapport à l’échelle de couleurs qui est utilisée sur la carte. J’imagine que vous avez déduit qu’on
-a spécifié qu’on voulait une échelle de différents verts avec l’argument <code>palette</code> qui prend la valeur <code>"Greens"</code>. Les plus observateurs auront aussi remarqué
-qu’on a spécifié l’étendue de cette échelle à l’aide de l’argument <code>domain</code>. Comme la fonction <code>range()</code> retourne les valeurs minimale et maximale de son
-argument, l’échelle qu’on a défini est linéaire entre le minimum (35 523 $) et le maximum
+a spécifié qu’on voulait une échelle de différents verts avec l’argument <code>palette</code> qui prend la valeur <code>"Greens"</code> <span class="emoji">🤑</span>. Les plus
+observateurs auront aussi remarqué qu’on a spécifié l’étendue de cette échelle à l’aide de l’argument <code>domain</code>. Comme la fonction <code>range()</code> retourne les
+valeurs minimale et maximale de son argument, l’échelle qu’on a défini est linéaire entre le minimum
+(35 523 $) et le maximum
 (144 981 $) des revenus médians par aire de diffusion agrégée.</p>
 <p>Évidemment, cette définition d’échelle n’est pas toujours optimale. Ci-dessous, on affiche la distribution des revenus médians par aire de diffusion agrégée à
 l’aide du package <a href="https://ggplot2.tidyverse.org/"><code>ggplot2</code></a>. On attache aussi le <em>package</em> <a href="https://scales.r-lib.org"><code>scales</code></a> (déjà chargé avec
@@ -222,7 +225,7 @@ l’effet de mettre en surbrillance et d’afficher une étiquette lorsqu’on t
 et les arguments <code>label</code> et <code>labelOptions</code> pour les étiquettes.</p>
 <p>Pour donner un effet de surbrillance intéressant, on va augmenter l’opacité du remplissage et foncir et épaissir les contours du polygone. Pour les étiquettes,
 on utilisera de simples chaînes de caractères pour l’exemple. Pour avoir un contrôle total, on aurait aussi plutôt pu fournir directement le code html à
-afficher au passage de la souris. J’invite les lecteurs un peu plus expérimentés à l’essayer!</p>
+afficher au passage de la souris. J’invite les lecteurs un peu plus expérimentés (ou un peu plus <em>geeks</em> <span class="emoji">🤓</span>) à l’essayer!</p>
 </div>
 <div id="découpage-hydrographique" class="section level3">
 <h3>Découpage hydrographique</h3>
@@ -330,6 +333,10 @@ leaflet(
 </div>
 <div id="conclusion" class="section level2">
 <h2>Conclusion</h2>
-<p>Plusieurs de mes collègues m’avaient déjà demandé d’écrire un article avec quelques-uns de mes trucs personnels pour créer de belles cartes en
-<i class="fab fa-r-project"></i>. J’espère que celui-ci vous a plu et, surtout, qu’il vous sera utile lorsque vous créerez vos prochaines cartes!</p>
+<p>Ça fait plusieurs mois que j’avais en tête l’idée de créer un blogue portant sur différents sujets reliés à la science des données. Je ne prenais pas le temps
+de mettre ce plan à exécution, mais voilà qui est finalement fait <span class="emoji">😃</span>.</p>
+<p>Le sujet de mon premier article était une formalité puisque ça faisait déjà quelques fois que des collègues me demandaient de leur expliquer comment faire de
+belles cartes en <i class="fab fa-r-project"></i>. J’espère que celui-ci vous a plu et, surtout, qu’il vous sera utile lorsque vous créerez vos prochaines
+cartes.</p>
+<p>Si vous avez des suggestions pour de futurs articles, des sujets que vous aimeriez approfondir davantage, n’hésitez pas à m’en faire part <span class="emoji">🤗</span>!</p>
 </div>
