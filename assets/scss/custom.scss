@@ -4,8 +4,9 @@ ul.share {
 }
 
 ul.share li i {
-  opacity:0.4;
+  opacity: 0.4;
   transition: opacity 0.5s;
+  color: #212529;
 }
 
 ul.share li:hover i {
@@ -42,16 +43,11 @@ pre code {
 
 // Code formatting
 code {
-  color: $sta-link;
+  color: #212529;
   padding-left: .1em;
 	padding-right: .1em;
 }
 
 pre, code {
 	background-color: #F5F5F5 !important;
-}
-
-a code {
-  text-decoration: underline;
-  text-decoration-style: dashed;
 }
