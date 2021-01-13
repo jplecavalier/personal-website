@@ -1,0 +1,53 @@
+// Sharing buttons
+ul.share {
+  justify-content: left;
+}
+
+ul.share li i {
+  opacity: 0.4;
+  transition: opacity 0.5s;
+  color: #212529;
+}
+
+ul.share li:hover i {
+  transform: initial;
+  opacity: 1;
+}
+
+// Make article preview bold-italic
+.article-preview {
+  font-weight: bold;
+  font-style: italic;
+}
+
+// Keep emoji non-bold and non-italic
+.emoji {
+  font-weight: normal;
+  font-style: normal;
+}
+
+// Authors' social network buttons
+.network-icon > li:hover {
+  transform: scale(1.05);
+}
+
+// Fix word-wrap bug on Safari
+pre code {
+  word-wrap:normal;
+}
+
+// Add margin after htmlwidgets
+.html-widget {
+  margin: 0 0 1rem 0;
+}
+
+// Code formatting
+code {
+  color: #212529;
+  padding-left: .1em;
+	padding-right: .1em;
+}
+
+pre, code {
+	background-color: #F5F5F5 !important;
+}

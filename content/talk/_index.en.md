@@ -1,15 +1,14 @@
-+++
-title = "Talks"
-math = false
-highlight = false
+---
+title: Talks & Workshops
 
-# List format.
-#   0 = Simple
-#   1 = Detailed
-list_format = 0
+# View.
+#   1 = List
+#   2 = Compact
+#   3 = Card
+view: 2
 
-# Optional featured image (relative to `static/img/` folder).
-[header]
-image = "headers/talks-cover.jpg"
-caption = ""
-+++
+# Optional header image (relative to `static/img/` folder).
+header:
+  caption: ""
+  image: ""
+---

@@ -1,0 +1,28 @@
+# Pages widget
+
+- id: more_pages
+  translation: See all
+
+- id: more_posts
+  translation: See all blog posts
+
+- id: more_talks
+  translation: See all talks & workshops
+  
+# Site footer
+
+- id: powered_by
+  translation: Powered by the
+  
+- id: academic_theme
+  translation: Academic theme
+  
+- id: for
+  translation: for
+  
+- id: license_word
+  translation: "License:"
+  
+- id: license_url
+  translation: "https://creativecommons.org/licenses/by-sa/4.0/"
+  

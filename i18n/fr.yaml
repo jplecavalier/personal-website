@@ -1,2 +1,28 @@
-- id: btn_slides
-  translation: Présentation
+# Pages widget
+
+- id: more_pages
+  translation: Voir tout
+
+- id: more_posts
+  translation: Voir tous les articles de blogue
+
+- id: more_talks
+  translation: Voir tous les ateliers & conférences
+  
+# Site footer
+
+- id: powered_by
+  translation: Propulsé par le
+  
+- id: academic_theme
+  translation: thème Academic
+  
+- id: for
+  translation: de
+  
+- id: license_word
+  translation: "Licence :"
+  
+- id: license_url
+  translation: "https://creativecommons.org/licenses/by-sa/4.0/deed.fr"
+  
