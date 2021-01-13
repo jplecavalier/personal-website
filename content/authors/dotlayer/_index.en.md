@@ -1,6 +1,6 @@
 ---
 # Display name
-title: .Layer
+title: dot-layer (.Layer)
 
 # Username (this should match the folder name)
 authors:
