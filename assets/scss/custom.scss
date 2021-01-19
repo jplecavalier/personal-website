@@ -51,3 +51,9 @@ code {
 pre, code {
 	background-color: #F5F5F5 !important;
 }
+
+// Fix leaflet bug to display tiles in panes (https://stackoverflow.com/questions/65784452/browser-inconsistency-with-the-leafletaddmappane-function)
+img.leaflet-tile {
+    max-width: none !important;
+    max-height: none !important;
+}
