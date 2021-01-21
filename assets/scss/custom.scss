@@ -57,3 +57,13 @@ img.leaflet-tile {
     max-width: none !important;
     max-height: none !important;
 }
+
+// Adjust datatables style
+.datatables {
+  font-size: 12px;
+}
+
+.datatables td,
+.datatables th {
+  font-size: 15px;
+}
