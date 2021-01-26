@@ -13,20 +13,15 @@ image:
   caption: "[Image par Ross Parmly de Unsplash](https://unsplash.com/photos/rf6ywHVkrlY/)"
   focal_point: "center"
   
-links:
-- icon: file-archive
-  icon_pack: fas
-  name: "Données"
-  url: "data.zip"
-  
 output:
   blogdown::html_page:
     lib_dir: "libs"
+    dev: "svg"
     css: "/css/custom.css"
     
 summary: ""
 
-disable_jquery: true
+disable_jquery: false
 ---
 
 J'imagine que, tout comme moi, plusieurs parmi vous étiez particulièrement enthousiastes lorsque la Ligue Nationale de Hockey (LNH)
@@ -143,26 +138,25 @@ On crée ensuite une autre table dans laquelle on viendra calculer les distances
 l'hypothèse que toutes les distances sont calculées à vol d'oiseau entre ceux-ci. Pour ce faire, on va utiliser la fonction `distm()` du *package*
 [`geosphere`](http://r-forge.r-project.org/projects/geosphere/).
 
-Les emplacements des amphitéâtres de chaque équipe ne sont pas disponibles (du moins pour l'instant) avec l'API de la LNH. Vous pouvez donc télécharger un
-fichier dans lequel je fournis ces informations [ici](data.zip). On charge ces données et on calcule une matrice des distances dans le bloc ci-dessous. On
-transformera ensuite cette matrice en table pour en faciliter l'interrogation.
+On commence donc par charger différentes informations sur chaque équipe (dont l'emplacement de leur amphithéâtre et leur division respective) à l'aide de la
+fonction `tidy_teams_meta()`. On calculera ensuite une matrice des distances qu'on transformera en table pour en faciliter l'interrogation.
 
 ```{r venues_distance}
 # Charger le package
 library(geosphere)
 
-# Charger les données sur les amphitéâtres
-venues <- fread("data/venues.csvy", yaml = TRUE)
+# Charger les informations des équipes
+teams_meta <- tidy_teams_meta()
 
 # Afficher un aperçu
-venues[]
+teams_meta[]
 
 # Calculer une matrice des distances en km
-venues_matrix <- round(distm(venues[, .(venue_long, venue_lat)])/1000L)
+venues_matrix <- round(distm(teams_meta[, .(venue_active_long, venue_active_lat)]) / 1000L)
 
 # Convertir sous la forme d'une table
 teams_distance <- setDT(
-  expand.grid(team = venues[, team], opponent = venues[, team])
+  expand.grid(team = teams_meta[, team_abbreviation], opponent = teams_meta[, team_abbreviation])
 )[, distance := as.integer(venues_matrix)]
 
 # Afficher un aperçu
@@ -265,7 +259,7 @@ create_travel_view <- function(teams_schedule) {
       }
       
       # Direction prochain match
-      if (is.na(off_days) | off_days<3L | team %in% c(venue, last_venue)) {
+      if (is.na(off_days) | off_days < 3L | team %in% c(venue, last_venue)) {
         return(list(
           from = last_venue,
           to = venue
@@ -276,7 +270,7 @@ create_travel_view <- function(teams_schedule) {
       distance <- teams_distance[team == TEAM & opponent %in% c(venue, last_venue), min(distance)]
       
       # Direction domicile + Direction prochain match
-      if (off_days>=5L | (off_days>=3 & distance<=2000)) {
+      if (off_days >= 5L | (off_days >= 3L & distance <= 2000L)) {
         return(list(
           from = c(last_venue, team),
           to = c(team, venue)
@@ -293,12 +287,12 @@ create_travel_view <- function(teams_schedule) {
     team = team,
     venue = venue,
     last_venue = last_venue,
-    off_days = date-last_date-1L,
+    off_days = date - last_date - 1L,
     SIMPLIFY = FALSE
   )), .(season, team)]
   
   # Ajouter la distance des voyages
-  travels[teams_distance, distance:=distance, on=c(from="team", to="opponent")]
+  travels[teams_distance, distance := distance, on = c(from = "team", to = "opponent")]
   
   # Appeler la valeur de sortie
   travels[]
@@ -312,23 +306,55 @@ teams_travel_2021 <- create_travel_view(teams_schedule_2021)
 teams_travel_2021[]
 ```
 
-On crée ensuite un sommaire par équipe indiquant le voyagement total en km pour la saison 2021 et on affiche l'ensemble des résultats dans un tableau
-interactif créé avec le *package* [`DT`]().
+On crée ensuite un sommaire par équipe indiquant le voyagement total en km pour la saison 2021 auquel on vient ajouter la division à laquelle appartient chaque
+équipe pour la saison en cours.
 
 ```{r summary_2021}
 # Charger le package
 library(DT)
 
-# Afficher le tableau interactif
-teams_travel_2021[, .(
+# Créer un tableau sommaire
+teams_travel_summary_2021 <- teams_travel_2021[, .(
   travels_nb = .N,
   travels_sum_km = sum(distance)
-), team] %>%
-  datatable(
-    colnames = c(
-      "Équipe" = "team",
-      "Nombre de voyages" = "travels_nb",
-      "Distance totale parcourue (km)" = "travels_sum_km"
-    )
+), team]
+
+# Fusionner les divisions
+teams_travel_summary_2021[teams_meta, division:=division_active_name, on=c(team="team_abbreviation")]
+
+# Afficher un aperçu
+teams_travel_summary_2021[]
+```
+
+On visualise l'information dans un graphique.
+
+```{r plot_summary_2021, fig.height=7}
+library(ggplot2)
+library(scales)
+
+ggplot(
+  data = teams_travel_summary_2021,
+  mapping = aes(
+    x = travels_sum_km,
+    y = reorder(as.factor(team), travels_sum_km),
+    fill = division
+  )
+) +
+  geom_col() +
+  scale_x_continuous(
+    labels = label_number(),
+    expand = expansion(mult = c(0, 0.05))
+  ) +
+  scale_fill_brewer(palette = "Set1") +
+  labs(
+    x = "Distance totale à parcourir (km)",
+    caption = "Saison 2021 de la LNH"
+  ) +
+  theme_minimal() +
+  theme(
+    panel.grid.major.y = element_blank(),
+    legend.title = element_blank(),
+    legend.position = "bottom",
+    axis.title.y = element_blank()
   )
 ```
