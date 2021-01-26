@@ -17,7 +17,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   message = FALSE,
-  warning = FALSE
+  warning = FALSE,
+  out.width = "100%"
 )
 
 emoji <- function(keyword) {
