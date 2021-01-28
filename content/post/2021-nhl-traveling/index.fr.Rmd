@@ -241,7 +241,8 @@ comprendre. On obtient alors, pour les deux premières semaines de leur calendri
 
 **&rArr; Verdict : Voyage de VAN vers MTL `r emoji("airplane")`**
 
-On crée maintenant une fonction implantant cet algorithme et on l'applique à l'ensemble des équipes pour le calendrier 2021.
+On crée maintenant une fonction implantant cet algorithme et on l'applique à l'ensemble des équipes
+pour le calendrier 2021.
 
 ```{r travel_view}
 # Définir la fonction create_travel_view()
@@ -306,29 +307,55 @@ teams_travel_2021 <- create_travel_view(teams_schedule_2021)
 teams_travel_2021[]
 ```
 
-On crée ensuite un sommaire par équipe indiquant le voyagement total en km pour la saison 2021 auquel on vient ajouter la division à laquelle appartient chaque
-équipe pour la saison en cours.
+On peut facilement valider que notre exemple pour le début de saison des Canadiens est bien
+représenté par l'algorithme.
+
+```{r mtl_head}
+teams_travel_2021[team == "MTL"][1:4]
+```
+
+On crée ensuite un sommaire par équipe indiquant la distance totale qui sera parcourue au cours de
+la saison 2021 auquel on vient ajouter la division actuelle de chaque équipe.
 
 ```{r summary_2021}
-# Charger le package
-library(DT)
+# Définir la fonction create_teams_travel_summary()
+create_teams_travel_summary <- function(teams_travel, nhl_schedule) {
+  
+  # Créer un tableau sommaire
+  teams_travel_summary <- teams_travel[, .(
+    travels_nb = .N,
+    travels_sum_km = sum(distance)
+  ), .(season, team)]
+  
+  # Ajout du nombre de km par jour de saison
+  nhl_season_days <- nhl_schedule[, .(
+    season_years = season_years,
+    game_date = as.Date(game_datetime, tz = Sys.timezone())
+  )][, .(season_days = as.integer(max(game_date) - min(game_date) + 1L)), season_years]
+  teams_travel_summary[nhl_season_days, season_days := season_days, on = c(season = "season_years")]
+  teams_travel_summary[, travels_km_days := travels_sum_km / season_days]
+  
+  # Ajout des divisions
+  teams_travel_summary[teams_meta, division := division_active_name, on = c(team = "team_abbreviation")]
+  
+  # Appeler la valeur de sortie
+  teams_travel_summary[]
+  
+}
 
-# Créer un tableau sommaire
-teams_travel_summary_2021 <- teams_travel_2021[, .(
-  travels_nb = .N,
-  travels_sum_km = sum(distance)
-), team]
-
-# Fusionner les divisions
-teams_travel_summary_2021[teams_meta, division:=division_active_name, on=c(team="team_abbreviation")]
+# Appliquer la fonction aux voyages 2021 des équipes
+teams_travel_summary_2021 <- create_teams_travel_summary(teams_travel_2021, nhl_schedule_2021)
 
 # Afficher un aperçu
 teams_travel_summary_2021[]
 ```
 
-On visualise l'information dans un graphique.
+On affiche maintenant un graphique permettant de visualiser cette information pour l'ensemble des
+équipes de la ligue. On utilise respectivement les *packages*
+[`ggplot2`](https://ggplot2.tidyverse.org) et [`scales`](https://scales.r-lib.org) pour créer le
+graphique et en modifier le formatage.
 
-```{r plot_summary_2021, fig.height=7}
+```{r plot_summary_2021, fig.height=8}
 library(ggplot2)
 library(scales)
 
@@ -347,10 +374,98 @@ ggplot(
   ) +
   scale_fill_brewer(palette = "Set1") +
   labs(
-    x = "Distance totale à parcourir (km)",
-    caption = "Saison 2021 de la LNH"
+    title = "Distance totale à parcourir par équipe",
+    subtitle = "Saison 2021 de la LNH",
+    x = "Distance (km)"
   ) +
-  theme_minimal() +
+  theme(
+    panel.grid.major.y = element_blank(),
+    legend.title = element_blank(),
+    legend.position = "bottom",
+    axis.title.y = element_blank()
+  )
+```
+
+Comme on pouvait s'y en attendre, les équipes près de la région métropolitaine de New York sont
+celles qui auront la plus petite distance à parcourir. On voit clairement que les équipes de la
+division canadienne sont celles qui, en moyenne, parcoureront le plus de kilomètres pendant la
+saison. Cependant, la distribution à l'intérieur de cette division est assez stable, ce qui n'est
+pas le cas pour la division ouest. Alors que les Ducks n'auront qu'un peu plus de 17 000 km à
+parcourir pendant la saison, les Blues en parcoureront près de 35 000 (plus du double!) pendant la
+même période. Reste à voir si ça donnera un assez gros coup de main aux Ducks pour qu'ils soient en
+mesure de compenser pour leur manque de talent offensif.
+
+Une chose est certaine, si le voyagement s'avère avoir un effet important sur la performance des
+joueurs en séries, la division est partira avec un avantage considérable sur ses adversaires au
+printemps prochain.
+
+## Comparaison avec les saisons précédentes
+
+Bien que la statistique absolue du nombre de kilomètres à parcourir pour chaque équipe lors de la
+saison 2021 soit intéressante, on pourrait aussi s'intéresser au changement relatif qu'apportent ces
+nouvelles divisions et ce nouveau calendrier à chaque équipe. Pour ce faire, on comparera la saison
+2021 aux saisons entre 2013-14 (dernier remaniement de divisions avant 2021) et 2019-20.
+
+On applique donc une à la suite de l'autre les fonctions créées dans la section précédente. Ensuite,
+on calcule la moyenne de kilomètres annuels parcourus et le nombre de kilomètres par jour moyen de
+chaque équipe sur ces 7 saisons.
+
+```{r summary_20132020}
+# Obtenir les calendriers 2013-14 à 2019-20 de la LNH
+nhl_schedule_20132020 <- tidy_schedule(
+  seasons_id = paste0(2013:2019, 2014:2020),
+  playoffs = FALSE
+)
+
+# Remplacer PHX par ARI
+nhl_schedule_20132020[away_team == "PHX", away_team := "ARI"]
+nhl_schedule_20132020[home_team == "PHX", home_team := "ARI"]
+
+# Créer une vue par équipe
+teams_schedule_20132020 <- create_team_view(nhl_schedule_20132020)
+
+# Transformation des données
+add_last_game(teams_schedule_20132020)
+
+# Créer une vue des déplacements
+teams_travel_20132020 <- create_travel_view(teams_schedule_20132020)
+
+# Créer le sommaire des déplacements par équipe par saison
+teams_travel_summary_20132020 <- create_teams_travel_summary(teams_travel_20132020, nhl_schedule_20132020)
+
+# Créer le sommaire des déplacements par équipe
+teams_travel_summary_20132020 <- teams_travel_summary_20132020[, .(
+  travels_avg_km = mean(travels_sum_km),
+  travels_avg_km_days = sum(travels_sum_km) / sum(season_days)
+), .(team, division)]
+
+# Afficher un aperçu
+teams_travel_summary_20132020[]
+```
+
+On peut finalement recréer le même graphique qu'à la section précédente, mais reflétant la moyenne
+des saisons 2013-14 à 2019-20 au lieu de la saison 2021.
+
+```{r plot_summary_201320, fig.height=8}
+ggplot(
+  data = teams_travel_summary_20132020,
+  mapping = aes(
+    x = travels_avg_km,
+    y = reorder(as.factor(team), travels_avg_km),
+    fill = division
+  )
+) +
+  geom_col() +
+  scale_x_continuous(
+    labels = label_number(),
+    expand = expansion(mult = c(0, 0.05))
+  ) +
+  scale_fill_brewer(palette = "Set1") +
+  labs(
+    title = "Distance annuelle moyenne parcourue par équipe",
+    subtitle = "Saisons 2013-14 à 2019-20 de la LNH",
+    x = "Distance annuelle moyenne (km)"
+  ) +
   theme(
     panel.grid.major.y = element_blank(),
     legend.title = element_blank(),
