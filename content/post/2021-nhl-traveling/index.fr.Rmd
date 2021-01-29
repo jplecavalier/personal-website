@@ -1,5 +1,5 @@
 ---
-title: "Analyse du calendrier 2021 de la LNH"
+title: "Analyse des divisions 2021 de la LNH"
 authors:
   - jplecavalier
 date: 2021-01-19
@@ -196,7 +196,7 @@ On pose donc les hypothèses suivantes :
 
 On peut faire un exemple concret en appliquant ces hypothèses au début de saison des
 [Canadiens de Montréal](https://www.nhl.com/fr/canadiens) pour bien comprendre. On obtient alors,
-pour les deux premières semaines de leur calendrier les voyages suivants :
+pour les deux premières semaines de leur calendrier, les voyages suivants :
 
 *Match du 13 janvier 2021 (MTL @ TOR)*
 
@@ -405,13 +405,15 @@ celles qui auront la plus petite distance à parcourir. On voit clairement que l
 division canadienne sont celles qui, en moyenne, parcoureront le plus de kilomètres pendant la
 saison. Cependant, la distribution à l'intérieur de cette division est assez uniforme, ce qui n'est
 pas le cas pour la division ouest. Alors que les Ducks n'auront qu'un peu plus de 17 000 km à
-parcourir pendant la saison, les Blues en parcoureront près de 35 000 (plus du double!) pendant la
-même période. Reste à voir si ça donnera un assez gros coup de main aux Ducks pour qu'ils soient en
-mesure de compenser pour leur manque de talent offensif.
+parcourir pendant la saison, les Blues en parcoureront près de 35 000 (plus du double
+`r emoji("face_screaming_in_fear")`!) pendant la même période. Reste à voir si ce sera assez pour
+permettre aux Ducks de compenser pour leur manque de talent offensif...
 
-Une chose est certaine, si la fatigue accumulée due au voyagement pendant la saison s'avère être un
-bon indicateur de la performance des joueurs en séries, la division est partira avec un avantage
-considérable sur ses adversaires au printemps prochain.
+![](https://media.giphy.com/media/RNEGEAUjnQvzGRiCza/giphy.gif)
+
+Une chose est certaine, si la fatigue accumulée générée en raison du voyagement pendant la saison
+s'avère être un bon indicateur de la performance des joueurs en séries, la division est partira avec
+un avantage considérable sur ses adversaires au printemps prochain.
 
 ## Comparaison avec les saisons précédentes {#comparaison-avec-les-saisons-precedentes}
 
@@ -500,12 +502,12 @@ ggplot(
   )
 ```
 
-Sans surprise, on voit que le fait de disputer plusieurs matchs consécutifs contre la même équipe
-réduit le déplacement annuel pour l'ensemble des équipes. Les grands gagnants de ce remaniement sont
-les équipes de la division est et ceux en retirant les bénéfices les moins importants (quoi que tout
-de même significatifs) sont principalement les équipes canadiennes. Mon coeur de partisan des
-Canadiens est toujours satisfait de voir les Leafs en dernière position d'un classement quel qu'il
-soit `r emoji("beaming_face_with_smiling_eyes")`.
+Sans surprise, on voit que le fait de disputer plusieurs matchs consécutifs contre le même
+adversaire réduit le déplacement annuel pour l'ensemble des équipes. Les grands gagnants de ce
+remaniement sont les équipes de la division est et ceux en retirant les bénéfices les moins
+importants (quoi que tout de même significatifs) sont principalement les équipes canadiennes. Ceci
+étant dit, mon coeur de partisan des Canadiens est toujours satisfait de voir les Leafs en dernière
+position d'un classement quel qu'il soit `r emoji("beaming_face_with_smiling_eyes")`.
 
 ## Conclusion
 
@@ -516,3 +518,5 @@ courant de la saison et ceux-ci risquent d'avoir encore plus de poids dans la ba
 n'oublions pas que le calendrier présenté dans l'article est à jour en date d'aujourd'hui mais qu'il
 risque fortement d'évoluer en cours de route lorsque des éclosions de COVID-19 surviendront. Bref,
 soyons patients et apprécions le spectacle!
+
+![](https://media.giphy.com/media/1SE3C3YtYcQ3Bl2WXA/giphy.gif)
