@@ -90,18 +90,18 @@ lignes dans le but d'avoir une vue pour chaque équipe. Ces étapes seront trait
 d'une fonction afin d'être réutilisées un peu plus loin dans l'article.
 
 ```{r team_view}
-# Définir la fonction create_team_view()
-create_team_view <- function(schedule) {
+# Définir la fonction create_teams_schedule()
+create_teams_schedule <- function(nhl_schedule) {
   
-  schedule <- rbindlist(list(
-    schedule[, .(
+  teams_schedule <- rbindlist(list(
+    nhl_schedule[, .(
       season = season_years,
       date = as.Date(game_datetime, tz = Sys.timezone()),
       status = "away",
       team = away_team,
       opponent = home_team
     )],
-    schedule[, .(
+    nhl_schedule[, .(
       season = season_years,
       date = as.Date(game_datetime, tz = Sys.timezone()),
       status = "home",
@@ -110,16 +110,16 @@ create_team_view <- function(schedule) {
     )]
   ))
   
-  schedule[, venue := ifelse(status == "home", team, opponent)]
+  teams_schedule[, venue := ifelse(status == "home", team, opponent)]
   
-  setkey(schedule, season, team, date)
+  setkey(teams_schedule, season, team, date)
   
-  schedule[]
+  teams_schedule[]
   
 }
 
 # Appliquer la fonction au calendrier 2021
-teams_schedule_2021 <- create_team_view(nhl_schedule_2021)
+teams_schedule_2021 <- create_teams_schedule(nhl_schedule_2021)
 
 # Afficher un aperçu
 teams_schedule_2021[]
@@ -172,12 +172,12 @@ teams_meta[]
 venues_matrix <- round(distm(teams_meta[, .(venue_active_long, venue_active_lat)]) / 1000L)
 
 # Convertir sous la forme d'une table
-teams_distance <- setDT(
+teams_distances <- setDT(
   expand.grid(team = teams_meta[, team_abbreviation], opponent = teams_meta[, team_abbreviation])
 )[, distance := as.integer(venues_matrix)]
 
 # Afficher un aperçu
-teams_distance[]
+teams_distances[]
 ```
 
 ## Analyse des déplacements {#analyse-des-deplacements}
@@ -265,10 +265,10 @@ On crée maintenant une fonction implantant cet algorithme et on l'applique à l
 pour le calendrier 2021.
 
 ```{r travel_view}
-# Définir la fonction create_travel_view()
-create_travel_view <- function(teams_schedule) {
+# Définir la fonction create_teams_travels()
+create_teams_travels <- function(teams_schedule) {
   
-  travels <- teams_schedule[, rbindlist(mapply(
+  teams_travels <- teams_schedule[, rbindlist(mapply(
     FUN = function(team, venue, last_venue, off_days) {
     
       # Empêcher les collisions
@@ -288,7 +288,7 @@ create_travel_view <- function(teams_schedule) {
       }
       
       # Distance minimale du domicile
-      distance <- teams_distance[team == TEAM & opponent %in% c(venue, last_venue), min(distance)]
+      distance <- teams_distances[team == TEAM & opponent %in% c(venue, last_venue), min(distance)]
       
       # Direction domicile + Direction prochain match
       if (off_days >= 5L | (off_days >= 3L & distance <= 2000L)) {
@@ -313,25 +313,25 @@ create_travel_view <- function(teams_schedule) {
   )), .(season, team)]
   
   # Ajouter la distance des voyages
-  travels[teams_distance, distance := distance, on = c(from = "team", to = "opponent")]
+  teams_travels[teams_distances, distance := distance, on = c(from = "team", to = "opponent")]
   
   # Appeler la valeur de sortie
-  travels[]
+  teams_travels[]
 
 }
 
 # Appliquer la fonction au calendrier 2021 des équipes
-teams_travel_2021 <- create_travel_view(teams_schedule_2021)
+teams_travels_2021 <- create_teams_travels(teams_schedule_2021)
 
 # Afficher un aperçu
-teams_travel_2021[]
+teams_travels_2021[]
 ```
 
 On peut facilement valider que notre exemple pour le début de saison des Canadiens est bien
 représenté par l'algorithme.
 
 ```{r mtl_head}
-teams_travel_2021[team == "MTL"][1:4]
+teams_travels_2021[team == "MTL"][1:4]
 ```
 
 On crée ensuite un sommaire par équipe indiquant la distance totale qui sera parcourue au cours de
@@ -339,21 +339,21 @@ la saison 2021 auquel on vient ajouter la division actuelle de chaque équipe.
 
 ```{r summary_2021}
 # Définir la fonction create_teams_travel_summary()
-create_teams_travel_summary <- function(teams_travel, nhl_schedule) {
+create_teams_travel_summary <- function(teams_travels, nhl_schedule) {
   
   # Créer un tableau sommaire
-  teams_travel_summary <- teams_travel[, .(
-    travels_nb = .N,
-    travels_sum_km = sum(distance)
+  teams_travel_summary <- teams_travels[, .(
+    nb = .N,
+    km = sum(distance)
   ), .(season, team)]
   
   # Ajout du nombre de km par jour de saison
   nhl_season_days <- nhl_schedule[, .(
     season_years = season_years,
     game_date = as.Date(game_datetime, tz = Sys.timezone())
-  )][, .(season_days = as.integer(max(game_date) - min(game_date) + 1L)), season_years]
-  teams_travel_summary[nhl_season_days, season_days := season_days, on = c(season = "season_years")]
-  teams_travel_summary[, travels_km_days := travels_sum_km / season_days]
+  )][, .(days = as.integer(max(game_date) - min(game_date) + 1L)), season_years]
+  teams_travel_summary[nhl_season_days, days := days, on = c(season = "season_years")]
+  teams_travel_summary[, km_per_day := km / days]
   
   # Ajout des divisions
   teams_travel_summary[teams_meta, division := division_active_name, on = c(team = "team_abbreviation")]
@@ -364,7 +364,7 @@ create_teams_travel_summary <- function(teams_travel, nhl_schedule) {
 }
 
 # Appliquer la fonction aux voyages 2021 des équipes
-teams_travel_summary_2021 <- create_teams_travel_summary(teams_travel_2021, nhl_schedule_2021)
+teams_travel_summary_2021 <- create_teams_travel_summary(teams_travels_2021, nhl_schedule_2021)
 
 # Afficher un aperçu
 teams_travel_summary_2021[]
@@ -382,8 +382,8 @@ library(scales)
 ggplot(
   data = teams_travel_summary_2021,
   mapping = aes(
-    x = travels_sum_km,
-    y = reorder(as.factor(team), travels_sum_km),
+    x = km,
+    y = reorder(as.factor(team), km),
     fill = division
   )
 ) +
@@ -438,22 +438,22 @@ nhl_schedule_20132020[away_team == "PHX", away_team := "ARI"]
 nhl_schedule_20132020[home_team == "PHX", home_team := "ARI"]
 
 # Créer une vue par équipe
-teams_schedule_20132020 <- create_team_view(nhl_schedule_20132020)
+teams_schedule_20132020 <- create_teams_schedule(nhl_schedule_20132020)
 
 # Transformation des données
 add_last_game(teams_schedule_20132020)
 
 # Créer une vue des déplacements
-teams_travel_20132020 <- create_travel_view(teams_schedule_20132020)
+teams_travels_20132020 <- create_teams_travels(teams_schedule_20132020)
 
 # Créer le sommaire des déplacements par équipe par saison
-teams_travel_summary_20132020 <- create_teams_travel_summary(teams_travel_20132020, nhl_schedule_20132020)
+teams_travel_summary_20132020 <- create_teams_travel_summary(teams_travels_20132020, nhl_schedule_20132020)
 
 # Créer le sommaire des déplacements par équipe
 teams_travel_summary_20132020 <- teams_travel_summary_20132020[, .(
   season = "2013-20",
-  travels_sum_km = mean(travels_sum_km),
-  travels_km_days = sum(travels_sum_km) / sum(season_days)
+  km_avg = mean(km),
+  km_per_day_avg = sum(km) / sum(days)
 ), .(team, division)]
 
 # Afficher un aperçu
@@ -469,23 +469,23 @@ pour la saison 2021 comparativement à la période de référence. Les résultat
 diminution relative.
 
 ```{r plot_summary_201321, fig.height=8}
-teams_travel_summary <- copy(teams_travel_summary_2021[, .(team, division, km_day_2021 = travels_km_days)])
-teams_travel_summary[teams_travel_summary_20132020, km_day_201320 := travels_km_days, on = .(team)]
-teams_travel_summary[, travel_cut := (km_day_2021 / km_day_201320) - 1]
+teams_travel_summary <- copy(teams_travel_summary_2021[, .(team, division, km_per_day_2021 = km_per_day)])
+teams_travel_summary[teams_travel_summary_20132020, km_per_day_201320 := km_per_day_avg, on = .(team)]
+teams_travel_summary[, km_per_day_cut := (km_per_day_2021 / km_per_day_201320) - 1]
 
 ggplot(
   data = teams_travel_summary,
   mapping = aes(
-    y = reorder(as.factor(team), travel_cut),
+    y = reorder(as.factor(team), km_per_day_cut),
     fill = division
   )
 ) +
-  geom_col(aes(x = km_day_2021), alpha = 1) +
-  geom_col(aes(x = km_day_201320), alpha = 0.5) +
+  geom_col(aes(x = km_per_day_2021), alpha = 1) +
+  geom_col(aes(x = km_per_day_201320), alpha = 0.5) +
   geom_text(
     mapping = aes(
-      x = km_day_2021,
-      label = percent(travel_cut, 1)
+      x = km_per_day_2021,
+      label = percent(km_per_day_cut, 1)
     ),
     nudge_x = 2,
     hjust = 0
