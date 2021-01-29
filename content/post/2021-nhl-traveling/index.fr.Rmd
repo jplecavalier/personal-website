@@ -376,9 +376,11 @@ On affiche maintenant un graphique permettant de visualiser cette information po
 graphique et en modifier le formatage.
 
 ```{r plot_summary_2021, fig.height=8}
+# Charger les packages
 library(ggplot2)
 library(scales)
 
+# Créer le graphique
 ggplot(
   data = teams_travel_summary_2021,
   mapping = aes(
@@ -469,10 +471,12 @@ pour la saison 2021 comparativement à la période de référence. Les résultat
 diminution relative.
 
 ```{r plot_summary_201321, fig.height=8}
+# Créer le sommaire comparatif
 teams_travel_summary <- copy(teams_travel_summary_2021[, .(team, division, km_per_day_2021 = km_per_day)])
 teams_travel_summary[teams_travel_summary_20132020, km_per_day_201320 := km_per_day_avg, on = .(team)]
 teams_travel_summary[, km_per_day_cut := (km_per_day_2021 / km_per_day_201320) - 1]
 
+# Créer le graphique
 ggplot(
   data = teams_travel_summary,
   mapping = aes(
