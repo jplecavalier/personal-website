@@ -56,3 +56,5 @@ ggplot2::theme_update(
   )
   
 )
+ggplot2::update_geom_defaults("text", list(family = ggplot2::theme_get()$text$family))
+ggplot2::update_geom_defaults("label", list(family = ggplot2::theme_get()$text$family))
