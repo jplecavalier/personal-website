@@ -16,28 +16,31 @@ image:
 output:
   blogdown::html_page:
     lib_dir: "libs"
-    dev: "svg"
     css: "/css/custom.css"
     
-summary: ""
+summary: >
+  Le but de cet article est d'analyser l'impact des nouvelles divisions de la LNH sur le voyagement
+  des équipes en utilisant le package R tidynhl.
+reading_time: 10
 
 disable_jquery: false
 ---
 
-J'imagine que, tout comme moi, plusieurs parmi vous étiez particulièrement enthousiastes lorsque la Ligue Nationale de Hockey (LNH)
-[a dévoilé les divisions](https://www.nhl.com/news/nhl-teams-in-new-divisions-for-2020-21-season/c-319844882) qui seront
-utilisées tout au long de la présente saison. Ça fait des années que je rêvais secrètement d'une division canadienne, mais je n'avais jamais cru que mon rêve
-deviendrait réalité. On aura droit à du hockey électrisant et certaines rivalités passeront probablement à un niveau supérieur, mais qu'en est-il de l'impact
-qu'auront ces divisions sur le voyagement des équipes?
+J'imagine que, tout comme moi, plusieurs parmi vous étiez particulièrement enthousiastes lorsque la
+Ligue Nationale de Hockey (LNH)
+[a dévoilé les divisions](https://www.nhl.com/news/nhl-teams-in-new-divisions-for-2020-21-season/c-319844882)
+qui seront utilisées tout au long de la présente saison. Ça fait des années que je rêvais
+secrètement d'une division canadienne, mais je n'avais jamais cru que mon rêve deviendrait réalité!
+On aura droit à du hockey électrisant et certaines rivalités passeront probablement à un niveau
+supérieur, mais qu'en est-il de l'impact sur le voyagement des équipes?
 
 <!--more-->
 
-Cet article est le premier d'une série de plusieurs dans lesquels j'explorerai différentes fonctionnalités du package <i class="fab fa-r-project"></i>
-[`tidynhl`](https://jplecavalier.github.io/tidynhl/), un projet personnel qui, lentement mais sûrement, prend forme. Le but de celui-ci est de faciliter
-l'accès aux données de la LNH en utilisant leur API ouvert de statistiques.
-
-Le but de l'article est donc d'analyser l'impact qu'a sur le voyagement de chaque équipe l'implantation de ces nouvelles divisions temporaires en utilisant
-[`tidynhl`](https://jplecavalier.github.io/tidynhl/).
+Cet article est le premier d'une série de plusieurs dans lesquels j'explorerai différentes
+fonctionnalités du package <i class="fab fa-r-project"></i>
+[`tidynhl`](https://jplecavalier.github.io/tidynhl/), un projet personnel qui, lentement mais
+sûrement, prend forme. Le but de celui-ci est de faciliter l'accès aux données de la LNH en
+utilisant leur API ouvert de statistiques.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
@@ -51,11 +54,21 @@ options(
     )
   ))
 )
+
+ggplot2::theme_update(
+  
+  panel.grid.major.y = ggplot2::element_blank(),
+  legend.title = ggplot2::element_blank(),
+  legend.position = "bottom",
+  axis.title.y = ggplot2::element_blank()
+  
+)
 ```
 
-## Construction du calendrier 2021 des équipes
+## Calendrier 2021 des équipes {#calendrier-2021-des-equipes}
 
-Pour commencer, on charge et on affiche un extrait du calendrier 2021 de la LNH à l'aide de la fonction `tidy_schedule()`.
+Pour commencer, on charge et on affiche un extrait du calendrier 2021 de la LNH à l'aide de la
+fonction `tidy_schedule()`.
 
 ```{r get_2021_schedule}
 # Charger les packages
@@ -72,8 +85,9 @@ nhl_schedule_2021 <- tidy_schedule(
 nhl_schedule_2021[]
 ```
 
-On fait ensuite une transformation des données pour garder les colonnes d'intérêt et dupliquer les lignes dans le but d'avoir une vue pour chaque équipe. Ces
-étapes seront traitées à l'intérieur d'une fonction afin d'être réutilisées un peu plus loin dans l'article.
+On fait ensuite une transformation des données pour garder les colonnes d'intérêt et dupliquer les
+lignes dans le but d'avoir une vue pour chaque équipe. Ces étapes seront traitées à l'intérieur
+d'une fonction afin d'être réutilisées un peu plus loin dans l'article.
 
 ```{r team_view}
 # Définir la fonction create_team_view()
@@ -111,10 +125,11 @@ teams_schedule_2021 <- create_team_view(nhl_schedule_2021)
 teams_schedule_2021[]
 ```
 
-## Transformation des données
+## Transformation des données {#transformation-des-donnees}
 
-L'objectif de cette section est de mettre en relation les matchs successifs des équipes. On définit donc une fonction qui créera de nouvelles colonnes dans
-lesquelles on va indiquer la date et l'endroit du dernier match. On applique cette fonction à nos données ci-dessous.
+L'objectif de cette section est de mettre en relation les matchs successifs des équipes. On définit
+donc une fonction qui créera de nouvelles colonnes dans lesquelles on va indiquer la date et
+l'endroit du dernier match. On applique cette fonction à nos données dans le bloc ci-dessous.
 
 ```{r last_game}
 # Définir la fonction add_last_game()
@@ -134,12 +149,14 @@ add_last_game(teams_schedule_2021)
 teams_schedule_2021[]
 ```
 
-On crée ensuite une autre table dans laquelle on viendra calculer les distances entre le domicile des différentes équipes. À des fins de simplicité, on pose
-l'hypothèse que toutes les distances sont calculées à vol d'oiseau entre ceux-ci. Pour ce faire, on va utiliser la fonction `distm()` du *package*
-[`geosphere`](http://r-forge.r-project.org/projects/geosphere/).
+On crée ensuite une autre table dans laquelle on viendra calculer les distances entre le domicile
+des différentes équipes. À des fins de simplicité, on pose l'hypothèse que toutes les distances sont
+calculées à vol d'oiseau entre ceux-ci. Pour ce faire, on va utiliser la fonction `distm()` du
+*package* [`geosphere`](http://r-forge.r-project.org/projects/geosphere/).
 
-On commence donc par charger différentes informations sur chaque équipe (dont l'emplacement de leur amphithéâtre et leur division respective) à l'aide de la
-fonction `tidy_teams_meta()`. On calculera ensuite une matrice des distances qu'on transformera en table pour en faciliter l'interrogation.
+On commence donc par charger différentes informations sur chaque équipe (dont l'emplacement de leur
+amphithéâtre et leur division respective) à l'aide de la fonction `tidy_teams_meta()`. On calculera
+ensuite une matrice des distances qu'on transformera en table pour en faciliter l'interrogation.
 
 ```{r venues_distance}
 # Charger le package
@@ -163,20 +180,23 @@ teams_distance <- setDT(
 teams_distance[]
 ```
 
-## Analyse des déplacements
+## Analyse des déplacements {#analyse-des-deplacements}
 
-Afin d'être en mesure de faire notre analyse, on doit tout d'abord poser d'autres hypothèses, cette fois par rapport à la fréquence de déplacement des équipes.
-Évidemment, celles-ci ne seront pas nécessairement exactes, mais j'essaierai de construite un algorithme balancé entre simplicité et réalité.
+Afin d'être en mesure de faire notre analyse, on doit tout d'abord poser d'autres hypothèses, cette
+fois par rapport à la fréquence de déplacement des équipes. Évidemment, celles-ci ne sont pas
+nécessairement exactes, mais j'ai essayé de construite un algorithme balancé entre simplicité et
+réalité.
 
 On pose donc les hypothèses suivantes :
 
 - Chaque équipe est basée à son domicile en début de saison;
 - Les déplacements à l'étranger sont effectués selon l'algorithme présenté ci-dessous.
     
-![](figs-fr/algo-travel.svg)
+![](figs-fr/algo-travel.png)
 
-On peut faire un exemple concret en appliquant ces hypothèses au début de saison des [Canadiens de Montréal](https://www.nhl.com/fr/canadiens) pour bien
-comprendre. On obtient alors, pour les deux premières semaines de leur calendrier les voyages suivants :
+On peut faire un exemple concret en appliquant ces hypothèses au début de saison des
+[Canadiens de Montréal](https://www.nhl.com/fr/canadiens) pour bien comprendre. On obtient alors,
+pour les deux premières semaines de leur calendrier les voyages suivants :
 
 *Match du 13 janvier 2021 (MTL @ TOR)*
 
@@ -377,38 +397,32 @@ ggplot(
     title = "Distance totale à parcourir par équipe",
     subtitle = "Saison 2021 de la LNH",
     x = "Distance (km)"
-  ) +
-  theme(
-    panel.grid.major.y = element_blank(),
-    legend.title = element_blank(),
-    legend.position = "bottom",
-    axis.title.y = element_blank()
   )
 ```
 
 Comme on pouvait s'y en attendre, les équipes près de la région métropolitaine de New York sont
 celles qui auront la plus petite distance à parcourir. On voit clairement que les équipes de la
 division canadienne sont celles qui, en moyenne, parcoureront le plus de kilomètres pendant la
-saison. Cependant, la distribution à l'intérieur de cette division est assez stable, ce qui n'est
+saison. Cependant, la distribution à l'intérieur de cette division est assez uniforme, ce qui n'est
 pas le cas pour la division ouest. Alors que les Ducks n'auront qu'un peu plus de 17 000 km à
 parcourir pendant la saison, les Blues en parcoureront près de 35 000 (plus du double!) pendant la
 même période. Reste à voir si ça donnera un assez gros coup de main aux Ducks pour qu'ils soient en
 mesure de compenser pour leur manque de talent offensif.
 
-Une chose est certaine, si le voyagement s'avère avoir un effet important sur la performance des
-joueurs en séries, la division est partira avec un avantage considérable sur ses adversaires au
-printemps prochain.
+Une chose est certaine, si la fatigue accumulée due au voyagement pendant la saison s'avère être un
+bon indicateur de la performance des joueurs en séries, la division est partira avec un avantage
+considérable sur ses adversaires au printemps prochain.
 
-## Comparaison avec les saisons précédentes
+## Comparaison avec les saisons précédentes {#comparaison-avec-les-saisons-precedentes}
 
 Bien que la statistique absolue du nombre de kilomètres à parcourir pour chaque équipe lors de la
 saison 2021 soit intéressante, on pourrait aussi s'intéresser au changement relatif qu'apportent ces
 nouvelles divisions et ce nouveau calendrier à chaque équipe. Pour ce faire, on comparera la saison
-2021 aux saisons entre 2013-14 (dernier remaniement de divisions avant 2021) et 2019-20.
+2021 aux saisons entre 2013-14 (dernier remaniement de divisions avant 2021) et 2019-20
+inclusivement.
 
-On applique donc une à la suite de l'autre les fonctions créées dans la section précédente. Ensuite,
-on calcule la moyenne de kilomètres annuels parcourus et le nombre de kilomètres par jour moyen de
-chaque équipe sur ces 7 saisons.
+On applique donc les fonctions créées dans la section précédente une à la suite de l'autre. Ensuite,
+on calcule la moyenne de certaines métriques d'intérêt sur ces 7 saisons.
 
 ```{r summary_20132020}
 # Obtenir les calendriers 2013-14 à 2019-20 de la LNH
@@ -435,41 +449,70 @@ teams_travel_summary_20132020 <- create_teams_travel_summary(teams_travel_201320
 
 # Créer le sommaire des déplacements par équipe
 teams_travel_summary_20132020 <- teams_travel_summary_20132020[, .(
-  travels_avg_km = mean(travels_sum_km),
-  travels_avg_km_days = sum(travels_sum_km) / sum(season_days)
+  season = "2013-20",
+  travels_sum_km = mean(travels_sum_km),
+  travels_km_days = sum(travels_sum_km) / sum(season_days)
 ), .(team, division)]
 
 # Afficher un aperçu
 teams_travel_summary_20132020[]
 ```
 
-On peut finalement recréer le même graphique qu'à la section précédente, mais reflétant la moyenne
-des saisons 2013-14 à 2019-20 au lieu de la saison 2021.
+Afin de comparer des pommes avec des pommes, on utilisera cette fois-ci la métrique de kilomètres
+parcourus en moyenne par jour pendant la saison. Cette métrique normalisera donc les saisons
+écourtées de 2019-20 et 2021 à un niveau comparable aux autres.
 
-```{r plot_summary_201320, fig.height=8}
+On affiche donc un graphique illustrant la réduction des déplacements quotidiens moyens par équipe
+pour la saison 2021 comparativement à la période de référence. Les résultats sont triés en ordre de
+diminution relative.
+
+```{r plot_summary_201321, fig.height=8}
+teams_travel_summary <- copy(teams_travel_summary_2021[, .(team, division, km_day_2021 = travels_km_days)])
+teams_travel_summary[teams_travel_summary_20132020, km_day_201320 := travels_km_days, on = .(team)]
+teams_travel_summary[, travel_cut := (km_day_2021 / km_day_201320) - 1]
+
 ggplot(
-  data = teams_travel_summary_20132020,
+  data = teams_travel_summary,
   mapping = aes(
-    x = travels_avg_km,
-    y = reorder(as.factor(team), travels_avg_km),
+    y = reorder(as.factor(team), travel_cut),
     fill = division
   )
 ) +
-  geom_col() +
+  geom_col(aes(x = km_day_2021), alpha = 1) +
+  geom_col(aes(x = km_day_201320), alpha = 0.5) +
+  geom_text(
+    mapping = aes(
+      x = km_day_2021,
+      label = percent(travel_cut, 1)
+    ),
+    nudge_x = 2,
+    hjust = 0
+  ) +
   scale_x_continuous(
     labels = label_number(),
     expand = expansion(mult = c(0, 0.05))
   ) +
   scale_fill_brewer(palette = "Set1") +
   labs(
-    title = "Distance annuelle moyenne parcourue par équipe",
-    subtitle = "Saisons 2013-14 à 2019-20 de la LNH",
-    x = "Distance annuelle moyenne (km)"
-  ) +
-  theme(
-    panel.grid.major.y = element_blank(),
-    legend.title = element_blank(),
-    legend.position = "bottom",
-    axis.title.y = element_blank()
+    title = "Réduction des déplacements par équipe",
+    subtitle = "Saisons 2021 vs 2013-14 à 2019-20 de la LNH",
+    x = "Déplacement moyen (km) par jour"
   )
 ```
+
+Sans surprise, on voit que le fait de disputer plusieurs matchs consécutifs contre la même équipe
+réduit le déplacement annuel pour l'ensemble des équipes. Les grands gagnants de ce remaniement sont
+les équipes de la division est et ceux en retirant les bénéfices les moins importants (quoi que tout
+de même significatifs) sont principalement les équipes canadiennes. Mon coeur de partisan des
+Canadiens est toujours satisfait de voir les Leafs en dernière position d'un classement quel qu'il
+soit `r emoji("beaming_face_with_smiling_eyes")`.
+
+## Conclusion
+
+Bien que cet article mette en lumière l'asymétrie réelle qu'amènent ces nouvelles divisions au
+niveau du voyagement des équipes, il demeure très difficile de prédire si cela aura un effet
+quelconque sur leurs performances sur la glace. Une tonne d'impondérables se manifesteront au
+courant de la saison et ceux-ci risquent d'avoir encore plus de poids dans la balance. De plus,
+n'oublions pas que le calendrier présenté dans l'article est à jour en date d'aujourd'hui mais qu'il
+risque fortement d'évoluer en cours de route lorsque des éclosions de COVID-19 surviendront. Bref,
+soyons patients et apprécions le spectacle!
