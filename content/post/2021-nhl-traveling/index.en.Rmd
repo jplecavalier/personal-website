@@ -1,5 +1,5 @@
 ---
-title: "Analyse des divisions 2021 de la LNH"
+title: "Analysing the 2021 NHL divisions"
 authors:
   - jplecavalier
 date: 2021-01-19
@@ -10,7 +10,7 @@ tags:
   - hockey-analytics
   
 image:
-  caption: "[Image par Ross Parmly de Unsplash](https://unsplash.com/photos/rf6ywHVkrlY/)"
+  caption: "[Image by Ross Parmly on Unsplash](https://unsplash.com/photos/rf6ywHVkrlY/)"
   focal_point: "center"
   
 output:
@@ -19,40 +19,31 @@ output:
     css: "/css/custom.css"
     
 summary: >
-  Le but de cet article est d'analyser l'impact des nouvelles divisions de la LNH sur le voyagement
-  des équipes en utilisant le package R tidynhl.
+  The goal of this post is to analyze the effect of the new NHL divisions on team traveling using
+  the R package tidynhl.
 reading_time: 10
 
 disable_jquery: false
 ---
 
-J'imagine que, tout comme moi, plusieurs parmi vous étiez particulièrement enthousiastes lorsque la
-Ligue Nationale de Hockey (LNH)
-[a dévoilé les divisions](https://www.nhl.com/news/nhl-teams-in-new-divisions-for-2020-21-season/c-319844882)
-qui seront utilisées tout au long de la présente saison. Ça fait des années que je rêvais
-secrètement d'une division canadienne, mais je n'avais jamais cru que mon rêve deviendrait réalité!
-On aura droit à du hockey électrisant et certaines rivalités passeront probablement à un niveau
-supérieur, mais qu'en est-il de l'impact sur le voyagement des équipes?
+I'm sure I'm not the only one out there who was very enthusiastic when the National Hockey League
+(NHL) [unveiled its newly reshuffled divisions](https://www.nhl.com/news/nhl-teams-in-new-divisions-for-2020-21-season/c-319844882)
+ahead of the 2021 season. I was secretly dreaming of an all-Canadian division for a long time, but
+never I thought that this dream could ever materialize. We're entitled to expect electrifying
+hockey for the upcoming season, and some rivalries will certainly reach a higher, more emotional
+level, but what about the effect of this reshuffling on team traveling?
 
 <!--more-->
 
-Cet article est le premier d'une série de plusieurs dans lesquels j'explorerai différentes
-fonctionnalités du *package* <i class="fab fa-r-project"></i>
-[`tidynhl`](https://jplecavalier.github.io/tidynhl/), un projet personnel qui, lentement mais
-sûrement, prend forme. Le but de celui-ci est de faciliter l'accès aux données de la LNH en
-utilisant leur API ouvert de statistiques.
+This post is the first of a series in which I will explore and explain different features of the
+<i class="fab fa-r-project"></i> package [`tidynhl`](https://jplecavalier.github.io/tidynhl/), a
+personal project that is slowly but surely taking shape. The purpose of this package is to give
+access to NHL data by facilitating the interaction with their open stats API, and to provide this
+data on a ready-to-use and clean (or tidy) format.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-  fig.path = "figs-fr/"
-)
-
-options(
-  DT.options = c(options()$DT.options, list(
-    language = list(
-      url = "//cdn.datatables.net/plug-ins/1.10.22/i18n/French.json"
-    )
-  ))
+  fig.path = "figs-en/"
 )
 
 ggplot2::theme_update(
@@ -65,32 +56,32 @@ ggplot2::theme_update(
 )
 ```
 
-## Calendrier 2021 des équipes {#calendrier-2021-des-equipes}
+## Team schedules for the 2021 season
 
-Pour commencer, on charge et on affiche un extrait du calendrier 2021 de la LNH à l'aide de la
-fonction `tidy_schedule()`.
+To begin, let's get and print an excerpt of the NHL 2021 schedule with the `tidy_schedule()`
+function.
 
 ```{r get_2021_schedule}
-# Charger les packages
+# Load the packages
 library(data.table)
 library(tidynhl)
 
-# Obtenir le calendrier 2021 de la LNH
+# Get the 2021 NHL schedule
 nhl_schedule_2021 <- tidy_schedule(
   seasons_id = "20202021",
   playoffs = FALSE
 )
 
-# Afficher un extrait du calendrier
+# Print an excerpt
 nhl_schedule_2021[]
 ```
 
-On fait ensuite une transformation des données pour garder les colonnes d'intérêt et dupliquer les
-lignes dans le but d'avoir une vue pour chaque équipe. Ces étapes seront traitées à l'intérieur
-d'une fonction afin d'être réutilisées un peu plus loin dans l'article.
+Then, we will drop the useless columns and duplicate the rows in order to get a view of the schedule
+in the perspective of every teams. These steps will be proceded inside a function so we will be able
+to reuse it in a later section of the post.
 
 ```{r team_view}
-# Définir la fonction create_teams_schedule()
+# Define the create_teams_schedule() function
 create_teams_schedule <- function(nhl_schedule) {
   
   teams_schedule <- rbindlist(list(
@@ -118,21 +109,22 @@ create_teams_schedule <- function(nhl_schedule) {
   
 }
 
-# Appliquer la fonction au calendrier 2021
+# Call the function with the 2021 schedule
 teams_schedule_2021 <- create_teams_schedule(nhl_schedule_2021)
 
-# Afficher un aperçu
+# Print an excerpt
 teams_schedule_2021[]
 ```
 
-## Transformation des données {#transformation-des-donnees}
+## Feature engineering
 
-L'objectif de cette section est de mettre en relation les matchs successifs des équipes. On définit
-donc une fonction qui créera de nouvelles colonnes dans lesquelles on va indiquer la date et
-l'endroit du dernier match. On applique cette fonction à nos données dans le bloc ci-dessous.
+The aim of this section is to create new features in the data representing the connection between
+successive games. Once again, this will be implemented through a reusable function that will create
+new columns indicating the date and location of the previous game. This function is created and
+called with our data in the code chunk below.
 
 ```{r last_game}
-# Définir la fonction add_last_game()
+# Define the add_last_game() function
 add_last_game <- function(teams_schedule) {
   
   teams_schedule[, `:=`(
@@ -142,45 +134,46 @@ add_last_game <- function(teams_schedule) {
   
 }
 
-# Appliquer la fonction au calendrier 2021
+# Call the function with the 2021 teams schedule
 add_last_game(teams_schedule_2021)
 
-# Afficher un aperçu
+# Print an excerpt
 teams_schedule_2021[]
 ```
 
-On crée ensuite une autre table dans laquelle on viendra calculer les distances entre le domicile
-des différentes équipes. À des fins de simplicité, on pose l'hypothèse que toutes les distances sont
-calculées à vol d'oiseau entre ceux-ci. Pour ce faire, on va utiliser la fonction `distm()` du
-*package* [`geosphere`](http://r-forge.r-project.org/projects/geosphere/).
+Then, we create another different table in which we will compute distances between any pair of team
+venues. For the sake of simplicity, we'll make the hypothesis that distances are calculated as the
+crow flies. The [`geosphere`](http://r-forge.r-project.org/projects/geosphere/) package provides an
+easy way to perform this with its `distm()` function.
 
-On commence donc par charger différentes informations sur chaque équipe (dont l'emplacement de leur
-amphithéâtre et leur division respective) à l'aide de la fonction `tidy_teams_meta()`. On calculera
-ensuite une matrice des distances qu'on transformera en table pour en faciliter l'interrogation.
+In the chunk below, we will first retrieve metadata for each team (two of which are their venue's
+geographic coordinates and their actual division) using the `tidy_teams_meta()` function. We'll then
+compute a distance matrix as specified earlier and reorganize it as a table to make an eventual
+merge easier.
 
 ```{r venues_distance}
-# Charger le package
+# Load the package
 library(geosphere)
 
-# Charger les informations des équipes
+# Get teams' metadata
 teams_meta <- tidy_teams_meta()
 
-# Afficher un aperçu
+# Print an excerpt
 teams_meta[]
 
-# Calculer une matrice des distances en km
+# Compute a distance matrix in km
 venues_matrix <- round(distm(teams_meta[, .(venue_active_long, venue_active_lat)]) / 1000L)
 
-# Convertir sous la forme d'une table
+# Convert it to a table
 teams_distances <- setDT(
   expand.grid(team = teams_meta[, team_abbreviation], opponent = teams_meta[, team_abbreviation])
 )[, distance := as.integer(venues_matrix)]
 
-# Afficher un aperçu
+# Print an excerpt
 teams_distances[]
 ```
 
-## Analyse des déplacements {#analyse-des-deplacements}
+## Travel analysis
 
 Afin d'être en mesure de faire notre analyse, on doit tout d'abord poser d'autres hypothèses, cette
 fois par rapport à la fréquence de déplacement des équipes. Évidemment, celles-ci ne sont pas
@@ -192,94 +185,94 @@ On pose donc les hypothèses suivantes :
 - Chaque équipe est basée à son domicile en début de saison;
 - Les déplacements à l'étranger sont effectués selon l'algorithme présenté ci-dessous.
     
-![](figs-fr/algo-travel.png)
+![](figs-en/algo-travel.png)
 
 On peut faire un exemple concret en appliquant ces hypothèses au début de saison des
-[Canadiens de Montréal](https://www.nhl.com/fr/canadiens) pour bien comprendre. On obtient alors,
+[Canadiens de Montréal](https://www.nhl.com/en/canadiens) pour bien comprendre. On obtient alors,
 pour les deux premières semaines de leur calendrier, les voyages suivants :
 
-*Match du 13 janvier 2021 (MTL @ TOR)*
+*January 13th 2021 game (MTL @ TOR)*
 
 - L'équipe est basée à MTL en début de saison
 
-**&rArr; Verdict : Voyage de MTL vers TOR `r emoji("airplane")`**
+**&rArr; Outcome: Traveling from MTL to TOR `r emoji("airplane")`**
 
 ***
 
-*Match du 16 janvier 2021 (MTL @ EDM)*
+*January 16th 2021 game (MTL @ EDM)*
 
 - L'équipe joue 2 matchs consécutifs sur la route (13 et 16 janvier)
 - Ces deux matchs ne sont pas contre le même adversaire (TOR et EDM)
 - L'adversaire le plus près (TOR) n'est pas à plus de 2000 km de MTL
 - L'équipe n'a pas 3 jours de congé entre les matchs (seulement les 14 et 15 janvier)
 
-**&rArr; Verdict : Voyage de TOR vers EDM `r emoji("airplane")`**
+**&rArr; Outcome: Traveling from TOR to EDM `r emoji("airplane")`**
 
 ***
 
-*Match du 18 janvier 2021 (MTL @ EDM)*
+*January 18th 2021 game (MTL @ EDM)*
 
 - L'équipe joue 2 matchs consécutifs sur la route (16 et 18 janvier)
 - Ces deux matchs sont contre le même adversaire (EDM)
 
-**&rArr; Verdict : Aucun voyage `r emoji("hotel")`**
+**&rArr; Outcome: Not traveling `r emoji("hotel")`**
 
 ***
 
-*Match du 20 janvier 2021 (MTL @ VAN)*
+*January 20th 2021 game (MTL @ VAN)*
 
 - L'équipe joue 2 matchs consécutifs sur la route (18 et 20 janvier)
 - Ces deux matchs ne sont pas contre le même adversaire (EDM et VAN)
 - L'adversaire le plus près (EDM) est à plus de 2000 km de MTL
 - L'équipe n'a pas 5 jours de congé entre les matchs (seulement le 19 janvier)
 
-**&rArr; Verdict : Voyage de EDM vers VAN `r emoji("airplane")`**
+**&rArr; Outcome: Traveling from EDM to VAN `r emoji("airplane")`**
 
 ***
 
-*Match du 21 janvier 2021 (MTL @ VAN)*
+*January 21st 2021 game (MTL @ VAN)*
 
 - L'équipe joue 2 matchs consécutifs sur la route (20 et 21 janvier)
 - Ces deux matchs sont contre le même adversaire (VAN)
 
-**&rArr; Verdict : Aucun voyage `r emoji("hotel")`**
+**&rArr; Outcome: Not traveling `r emoji("hotel")`**
 
 ***
 
-*Match du 23 janvier 2021 (MTL @ VAN)*
+*January 23rd 2021 game (MTL @ VAN)*
 
 - L'équipe joue 2 matchs consécutifs sur la route (21 et 23 janvier)
 - Ces deux matchs sont contre le même adversaire (VAN)
 
-**&rArr; Verdict : Aucun voyage `r emoji("hotel")`**
+**&rArr; Outcome: Not traveling `r emoji("hotel")`**
 
 ***
 
-*Match du 28 janvier 2021 (CGY @ MTL)*
+*January 28th 2021 game (CGY @ MTL)*
 
 - L'équipe ne joue pas 2 matchs consécutifs sur la route
 
-**&rArr; Verdict : Voyage de VAN vers MTL `r emoji("airplane")`**
+**&rArr; Outcome: Traveling from VAN to MTL `r emoji("airplane")`**
 
 On crée maintenant une fonction implantant cet algorithme et on l'applique à l'ensemble des équipes
 pour le calendrier 2021.
 
 ```{r travel_view}
-# Définir la fonction create_teams_travels()
+# Define the create_teams_travels() function
 create_teams_travels <- function(teams_schedule) {
   
   teams_travels <- teams_schedule[, rbindlist(mapply(
     FUN = function(team, venue, last_venue, off_days) {
     
-      # Empêcher les collisions
+      # Prevent names colliding
       TEAM <- team
       
-      # Aucun voyage
+      # No travel
       if (venue == last_venue) {
         return(NULL)
       }
       
-      # Direction prochain match
+      # Travel to next game
       if (is.na(off_days) | off_days < 3L | team %in% c(venue, last_venue)) {
         return(list(
           from = last_venue,
@@ -287,10 +280,10 @@ create_teams_travels <- function(teams_schedule) {
         ))
       }
       
-      # Distance minimale du domicile
+      # Minimal distance from home
       distance <- teams_distances[team == TEAM & opponent %in% c(venue, last_venue), min(distance)]
       
-      # Direction domicile + Direction prochain match
+      # Travel home + Travel to next game
       if (off_days >= 5L | (off_days >= 3L & distance <= 2000L)) {
         return(list(
           from = c(last_venue, team),
@@ -298,7 +291,7 @@ create_teams_travels <- function(teams_schedule) {
         ))
       }
       
-      # Direction prochain match
+      # Travel to next game
       list(
         from = last_venue,
         to = venue
@@ -312,18 +305,18 @@ create_teams_travels <- function(teams_schedule) {
     SIMPLIFY = FALSE
   )), .(season, team)]
   
-  # Ajouter la distance des voyages
+  # Add travel distances
   teams_travels[teams_distances, distance := distance, on = c(from = "team", to = "opponent")]
   
-  # Appeler la valeur de sortie
+  # Output
   teams_travels[]
 
 }
 
-# Appliquer la fonction au calendrier 2021 des équipes
+# Call the function with the 2021 teams schedule
 teams_travels_2021 <- create_teams_travels(teams_schedule_2021)
 
-# Afficher un aperçu
+# Print an excerpt
 teams_travels_2021[]
 ```
 
@@ -338,16 +331,16 @@ On crée ensuite un sommaire par équipe indiquant la distance totale qui sera p
 la saison 2021 auquel on vient ajouter la division actuelle de chaque équipe.
 
 ```{r summary_2021}
-# Définir la fonction create_teams_travel_summary()
+# Define the create_teams_travel_summary() function
 create_teams_travel_summary <- function(teams_travels, nhl_schedule) {
   
-  # Créer un tableau sommaire
+  # Create a summary table
   teams_travel_summary <- teams_travels[, .(
     nb = .N,
     km = sum(distance)
   ), .(season, team)]
   
-  # Ajout du nombre de km par jour de saison
+  # Add the km per day variable
   nhl_season_days <- nhl_schedule[, .(
     season_years = season_years,
     game_date = as.Date(game_datetime, tz = Sys.timezone())
@@ -355,18 +348,18 @@ create_teams_travel_summary <- function(teams_travels, nhl_schedule) {
   teams_travel_summary[nhl_season_days, days := days, on = c(season = "season_years")]
   teams_travel_summary[, km_per_day := km / days]
   
-  # Ajout des divisions
+  # Add the divisions
   teams_travel_summary[teams_meta, division := division_active_name, on = c(team = "team_abbreviation")]
   
-  # Appeler la valeur de sortie
+  # Output
   teams_travel_summary[]
   
 }
 
-# Appliquer la fonction aux voyages 2021 des équipes
+# Call the function with 2021 teams travels
 teams_travel_summary_2021 <- create_teams_travel_summary(teams_travels_2021, nhl_schedule_2021)
 
-# Afficher un aperçu
+# Print an excerpt
 teams_travel_summary_2021[]
 ```
 
@@ -376,11 +369,11 @@ On affiche maintenant un graphique permettant de visualiser cette information po
 graphique et en modifier le formatage.
 
 ```{r plot_summary_2021, fig.height=8}
-# Charger les packages
+# Load the packages
 library(ggplot2)
 library(scales)
 
-# Créer le graphique
+# Create the plot
 ggplot(
   data = teams_travel_summary_2021,
   mapping = aes(
@@ -391,13 +384,13 @@ ggplot(
 ) +
   geom_col() +
   scale_x_continuous(
-    labels = label_number(),
+    labels = label_number(big.mark = ","),
     expand = expansion(mult = c(0, 0.05))
   ) +
   scale_fill_brewer(palette = "Set1") +
   labs(
-    title = "Distance totale à parcourir par équipe",
-    subtitle = "Saison 2021 de la LNH",
+    title = "Total traveling distance by team",
+    subtitle = "NHL 2021 season",
     x = "Distance (km)"
   )
 ```
@@ -417,7 +410,7 @@ Une chose est certaine, si la fatigue accumulée générée en raison du voyagem
 s'avère être un bon indicateur de la performance des joueurs en séries, la division est partira avec
 un avantage considérable sur ses adversaires au printemps prochain.
 
-## Comparaison avec les saisons précédentes {#comparaison-avec-les-saisons-precedentes}
+## Comparing with previous seasons
 
 Bien que la statistique absolue du nombre de kilomètres à parcourir pour chaque équipe lors de la
 saison 2021 soit intéressante, on pourrait aussi s'intéresser au changement relatif qu'apportent ces
@@ -429,36 +422,36 @@ On applique donc les fonctions créées dans la section précédente une à la s
 on calcule la moyenne de certaines métriques d'intérêt sur ces 7 saisons.
 
 ```{r summary_20132020}
-# Obtenir les calendriers 2013-14 à 2019-20 de la LNH
+# Get the 2013-14 to 2019-20 NHL schedule
 nhl_schedule_20132020 <- tidy_schedule(
   seasons_id = paste0(2013:2019, 2014:2020),
   playoffs = FALSE
 )
 
-# Remplacer PHX par ARI
+# Replace PHX by ARI
 nhl_schedule_20132020[away_team == "PHX", away_team := "ARI"]
 nhl_schedule_20132020[home_team == "PHX", home_team := "ARI"]
 
-# Créer une vue par équipe
+# Create teams' schedule
 teams_schedule_20132020 <- create_teams_schedule(nhl_schedule_20132020)
 
-# Transformation des données
+# Transform the data
 add_last_game(teams_schedule_20132020)
 
-# Créer une vue des déplacements
+# Create team's travels
 teams_travels_20132020 <- create_teams_travels(teams_schedule_20132020)
 
-# Créer le sommaire des déplacements par équipe par saison
+# Create team's travels summary by season
 teams_travel_summary_20132020 <- create_teams_travel_summary(teams_travels_20132020, nhl_schedule_20132020)
 
-# Créer le sommaire des déplacements par équipe
+# Create team's travels summary
 teams_travel_summary_20132020 <- teams_travel_summary_20132020[, .(
   season = "2013-20",
   km_avg = mean(km),
   km_per_day_avg = sum(km) / sum(days)
 ), .(team, division)]
 
-# Afficher un aperçu
+# Print an excerpt
 teams_travel_summary_20132020[]
 ```
 
@@ -471,12 +464,12 @@ pour la saison 2021 comparativement à la période de référence. Les résultat
 diminution relative.
 
 ```{r plot_summary_201321, fig.height=8}
-# Créer le sommaire comparatif
+# Create comparative summary
 teams_travel_summary <- copy(teams_travel_summary_2021[, .(team, division, km_per_day_2021 = km_per_day)])
 teams_travel_summary[teams_travel_summary_20132020, km_per_day_201320 := km_per_day_avg, on = .(team)]
 teams_travel_summary[, km_per_day_cut := (km_per_day_2021 / km_per_day_201320) - 1]
 
-# Créer le graphique
+# Create the plot
 ggplot(
   data = teams_travel_summary,
   mapping = aes(
@@ -495,14 +488,14 @@ ggplot(
     hjust = 0
   ) +
   scale_x_continuous(
-    labels = label_number(),
+    labels = label_number(big.mark = ","),
     expand = expansion(mult = c(0, 0.05))
   ) +
   scale_fill_brewer(palette = "Set1") +
   labs(
-    title = "Réduction des déplacements par équipe",
-    subtitle = "Saisons 2021 vs 2013-14 à 2019-20 de la LNH",
-    x = "Déplacement moyen (km) par jour"
+    title = "Traveling reduction by team",
+    subtitle = "2021 vs 2013-14 to 2019-20 NHL seasons",
+    x = "Average daily traveling distance (km)"
   )
 ```
 
@@ -524,3 +517,4 @@ risque fortement d'évoluer en cours de route lorsque des éclosions de COVID-19
 soyons patients et apprécions le spectacle!
 
 ![](https://media.giphy.com/media/1SE3C3YtYcQ3Bl2WXA/giphy.gif)
+
