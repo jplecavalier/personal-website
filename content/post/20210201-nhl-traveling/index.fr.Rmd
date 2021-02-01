@@ -87,7 +87,7 @@ nhl_schedule_2021[]
 
 On fait ensuite une transformation des données pour garder les colonnes d'intérêt et dupliquer les
 lignes dans le but d'avoir une vue pour chaque équipe. Ces étapes seront traitées à l'intérieur
-d'une fonction afin d'être réutilisées un peu plus loin dans l'article.
+d'une fonction qui pourra être réutilisée un peu plus loin dans l'article.
 
 ```{r team_view}
 # Définir la fonction create_teams_schedule()
@@ -129,7 +129,8 @@ teams_schedule_2021[]
 
 L'objectif de cette section est de mettre en relation les matchs successifs des équipes. On définit
 donc une fonction qui créera de nouvelles colonnes dans lesquelles on va indiquer la date et
-l'endroit du dernier match. On applique cette fonction à nos données dans le bloc ci-dessous.
+l'endroit du dernier match. On crée cette fonction et on l'applique à nos données dans le bloc
+ci-dessous.
 
 ```{r last_game}
 # Définir la fonction add_last_game()
@@ -262,7 +263,7 @@ pour les deux premières semaines de leur calendrier, les voyages suivants :
 **&rArr; Verdict : Voyage de VAN vers MTL `r emoji("airplane")`**
 
 On crée maintenant une fonction implantant cet algorithme et on l'applique à l'ensemble des équipes
-pour le calendrier 2021.
+pour leur calendrier 2021.
 
 ```{r travel_view}
 # Définir la fonction create_teams_travels()
@@ -507,7 +508,7 @@ ggplot(
 ```
 
 Sans surprise, on voit que le fait de disputer plusieurs matchs consécutifs contre le même
-adversaire réduit le déplacement annuel pour l'ensemble des équipes. Les grands gagnants de ce
+adversaire réduit les déplacements globaux pour l'ensemble des équipes. Les grands gagnants de ce
 remaniement sont les équipes de la division est et ceux en retirant les bénéfices les moins
 importants (quoi que tout de même significatifs) sont principalement les équipes canadiennes. Ceci
 étant dit, mon coeur de partisan des Canadiens est toujours satisfait de voir les Leafs en dernière

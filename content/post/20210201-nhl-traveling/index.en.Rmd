@@ -1,5 +1,5 @@
 ---
-title: "How the 2021 reshuffling of NHL divisions will lessen traveling"
+title: "How the 2021 reshuffling of NHL divisions will reduce traveling"
 authors:
   - jplecavalier
 date: 2021-02-01
@@ -77,8 +77,8 @@ nhl_schedule_2021[]
 ```
 
 Then, we will drop the useless columns and duplicate the rows in order to get a view of the schedule
-in the perspective of every teams. These steps will be proceded inside a function so we will be able
-to reuse it in a later section of the post.
+in the perspective of every teams. These steps will be done inside a function that will be reuse in
+a later section of the post.
 
 ```{r team_view}
 # Define the create_teams_schedule() function
@@ -121,7 +121,7 @@ teams_schedule_2021[]
 The aim of this section is to create new features in the data representing the connection between
 successive games. Once again, this will be implemented through a reusable function that will create
 new columns indicating the date and location of the previous game. This function is created and
-called with our data in the code chunk below.
+called on our data in the code chunk below.
 
 ```{r last_game}
 # Define the add_last_game() function
@@ -144,7 +144,7 @@ teams_schedule_2021[]
 Then, we create another different table in which we will compute distances between any pair of team
 venues. For the sake of simplicity, we'll make the hypothesis that distances are calculated as the
 crow flies. The [`geosphere`](http://r-forge.r-project.org/projects/geosphere/) package provides an
-easy way to perform this with its `distm()` function.
+easy way to perform this with the `distm()` function.
 
 In the chunk below, we will first retrieve metadata for each team (two of which are their venue's
 geographic coordinates and their actual division) using the `tidy_teams_meta()` function. We'll then
@@ -187,7 +187,7 @@ We will then assume the following assumptions:
 ![](figs-en/algo-travel.png)
 
 To make sure it is well understood, we can apply the algorithm to the first few games of the
-[Montreal Canadiens](https://www.nhl.com/en/canadiens) and analyse the outcomes. For the first two
+[Montreal Canadiens](https://www.nhl.com/en/canadiens) and analyze the result. For the first two
 weeks of the season, the resulting travels for the Habs are listed below:
 
 *January 13th 2021 game (MTL @ TOR)*
@@ -325,11 +325,8 @@ example on the Canadiens.
 teams_travels_2021[team == "MTL"][1:4]
 ```
 
-On crée ensuite un sommaire par équipe indiquant la distance totale qui sera parcourue au cours de
-la saison 2021 auquel on vient ajouter la division actuelle de chaque équipe.
-
 We then create a summary indicating the total distance on which each team will have to travel during
-the 2021 season. We also add the actual divisions for a matter of making comparisons among them.
+the 2021 season. We also add the actual divisions for the matter of making comparisons among them.
 
 ```{r summary_2021}
 # Define the create_teams_travel_summary() function
@@ -399,26 +396,26 @@ As one may probably have guessed right, the three teams in the New York Metropol
 and NJD) are those who will travel on the shortest distance for the season. Teams in the
 all-Canadian division are those that, in average, will travel on the greatest distance. However, one
 could observe that the distribution within this division is rather uniform, which is not the case
-for the Western division. While the Anaheim Ducks will only need to travel a slight more than 17,000
-km over the course of the season, the St. Louis Blues will accumulate just short of 35,000 km
-(more than twice `r emoji("face_screaming_in_fear")`!) on the same period. We'll see if that
-competitive advantage for the Ducks will prove enough to overcome their obvious lack of offensive
-skills...
+for the Western division. Indeed, while the Anaheim Ducks will only need to travel a slight more
+than 17,000 km over the course of the season, the St. Louis Blues will accumulate just short of
+35,000 km (more than twice `r emoji("face_screaming_in_fear")`!) on the same period. We'll see if
+that competitive advantage for the Ducks will prove enough to overcome their obvious lack of
+offensive skills...
 
 ![](https://media.giphy.com/media/RNEGEAUjnQvzGRiCza/giphy.gif)
 
-One sure thing, if the accumulated tiredness coming from traveling during the season is an important
-factor on players' performance in playoffs, teams from the Eastern division will have a major
-headstart when playing other teams this spring.
+One thing is sure, if the accumulated tiredness coming from traveling during the season is an
+important factor on player performances in playoffs, teams from the Eastern division will have a
+major headstart when playing other teams this spring.
 
 ## Comparing with previous seasons
 
 Although the absolute traveling distance of each team for the 2021 season is insightfull, it could
-also be interesting to look at the relative change induce by those new divisions and the new
+also be interesting to look at the relative change induced by those new divisions and the new
 schedule patterns on each team. To do so, we will compare the 2021 season to seasons between 2013-14
-(the last time the NHL shuffled the divisions before this year) and 2019-20.
+(the last time the NHL reshuffled the divisions before this year) and 2019-20.
 
-Ww reuse the functions defined in the last section one after the other. Then, we compute average
+We reuse the functions defined in the last section one after the other. Then, we compute average
 metrics on those 7 seasons.
 
 ```{r summary_20132020}
@@ -457,7 +454,7 @@ teams_travel_summary_20132020[]
 
 To make sure we compare apples to apples, we will this time study the average daily traveling
 distance during the season. This metric ensures that the 2019-20 and 2021 seasons won't skew the
-global picture because they were shortened following the COVID-19 outbreak.
+global picture because they were shortened due to the COVID-19 pandemic.
 
 The following plot shows the observed decrease in average daily traveling distance by team for the
 2021 season compared to the reference period. Results are sorted by relative decreasing.
@@ -509,11 +506,11 @@ am a mad Montreal Canadiens fan, and the most important thing of all for me is t
 ## Conclusion
 
 Even though this post highlighted the traveling asymmetries created by the reshuffling of the NHL
-divisions, it still remains difficult to predict it all of this will have a significant impact on
-the ice. The season promise to offer its share of unpredictable surprises, with some of them having
-probably even greater consequences at the end. Moreover, it's important to remember that the
-schedule presented in this post is up-to-date as of today, but is very likely to change with little
-notice with COVID-19 local outbreaks. After all, there is nothing more we can do than to wait and
-see, and of course, enjoy the show!
+divisions, it still remains difficult to predict wether all of this will have a significant impact
+on the ice or not. The season promise to offer its share of unpredictable surprises, with some of
+them having probably even greater consequences at the end. Moreover, it's important to remember that
+the schedule presented in this post is up-to-date as of today, but is very likely to change with
+little notice with COVID-19 local outbreaks. After all, there is not much we can do more than to
+wait and see, and of course, enjoy the show!
 
 ![](https://media.giphy.com/media/1SE3C3YtYcQ3Bl2WXA/giphy.gif)
