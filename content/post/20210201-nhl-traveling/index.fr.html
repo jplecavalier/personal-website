@@ -1,0 +1,550 @@
+---
+title: "Comment les divisions 2021 de la LNH réduiront les déplacements"
+authors:
+  - jplecavalier
+date: 2021-02-01
+
+tags:
+  - r
+  - tidynhl
+  - hockey-analytics
+  
+image:
+  caption: "[Image par Ross Parmly de Unsplash](https://unsplash.com/photos/rf6ywHVkrlY/)"
+  focal_point: "center"
+  
+output:
+  blogdown::html_page:
+    lib_dir: "libs"
+    css: "/css/custom.css"
+    
+summary: >
+  Le but de cet article est d'analyser l'impact des nouvelles divisions de la LNH sur le voyagement
+  des équipes en utilisant le package R tidynhl.
+reading_time: 10
+
+disable_jquery: false
+---
+
+<link href="libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections/anchor-sections.js"></script>
+  <link rel="stylesheet" href="/css/custom.css" type="text/css" />
+
+
+<p>J’imagine que, tout comme moi, plusieurs parmi vous étiez particulièrement enthousiastes lorsque la
+Ligue Nationale de Hockey (LNH)
+<a href="https://www.nhl.com/news/nhl-teams-in-new-divisions-for-2020-21-season/c-319844882">a dévoilé les divisions</a>
+qui seront utilisées tout au long de la présente saison. Ça fait des années que je rêvais
+secrètement d’une division canadienne, mais je n’avais jamais cru que mon rêve deviendrait réalité!
+On aura droit à du hockey électrisant et certaines rivalités passeront probablement à un niveau
+supérieur, mais qu’en est-il de l’impact sur le voyagement des équipes?</p>
+<!--more-->
+<p>Cet article est le premier d’une série de plusieurs dans lesquels j’explorerai différentes
+fonctionnalités du <em>package</em> <i class="fab fa-r-project"></i>
+<a href="https://jplecavalier.github.io/tidynhl/"><code>tidynhl</code></a>, un projet personnel qui, lentement mais
+sûrement, prend forme. Le but de celui-ci est de faciliter l’accès aux données de la LNH en
+utilisant leur API ouvert de statistiques.</p>
+<div id="calendrier-2021-des-equipes" class="section level2">
+<h2>Calendrier 2021 des équipes</h2>
+<p>Pour commencer, on charge et on affiche un extrait du calendrier 2021 de la LNH à l’aide de la
+fonction <code>tidy_schedule()</code>.</p>
+<pre class="r"><code># Charger les packages
+library(data.table)
+library(tidynhl)
+
+# Obtenir le calendrier 2021 de la LNH
+nhl_schedule_2021 &lt;- tidy_schedule(
+  seasons_id = &quot;20202021&quot;,
+  playoffs = FALSE
+)
+
+# Afficher un extrait du calendrier
+nhl_schedule_2021[]
+#&gt;      season_years season_type       game_datetime game_status             venue_name away_team away_score home_score home_team game_nbot game_shootout
+#&gt;   1:      2020-21     regular 2021-01-13 17:30:00       final     Wells Fargo Center       PIT          3          6       PHI         0         FALSE
+#&gt;   2:      2020-21     regular 2021-01-13 19:00:00       final       Scotiabank Arena       MTL          4          5       TOR         1         FALSE
+#&gt;   3:      2020-21     regular 2021-01-13 20:00:00       final           Amalie Arena       CHI          1          5       TBL         0         FALSE
+#&gt;   4:      2020-21     regular 2021-01-13 22:00:00       final           Rogers Place       VAN          5          3       EDM         0         FALSE
+#&gt;   5:      2020-21     regular 2021-01-13 22:30:00       final             Ball Arena       STL          4          1       COL         0         FALSE
+#&gt;  ---                                                                                                                                                  
+#&gt; 864:      2020-21     regular 2021-05-08 22:00:00   scheduled           Rogers Arena       CGY         NA         NA       VAN        NA            NA
+#&gt; 865:      2020-21     regular 2021-05-08 22:00:00   scheduled         T-Mobile Arena       STL         NA         NA       VGK        NA            NA
+#&gt; 866:      2020-21     regular 2021-05-08 22:00:00   scheduled         STAPLES Center       COL         NA         NA       LAK        NA            NA
+#&gt; 867:      2020-21     regular 2021-05-08 22:30:00   scheduled SAP Center at San Jose       ARI         NA         NA       SJS        NA            NA
+#&gt; 868:      2020-21     regular 2021-05-10 19:00:00   scheduled           Amalie Arena       DAL         NA         NA       TBL        NA            NA</code></pre>
+<p>On fait ensuite une transformation des données pour garder les colonnes d’intérêt et dupliquer les
+lignes dans le but d’avoir une vue pour chaque équipe. Ces étapes seront traitées à l’intérieur
+d’une fonction qui pourra être réutilisée un peu plus loin dans l’article.</p>
+<pre class="r"><code># Définir la fonction create_teams_schedule()
+create_teams_schedule &lt;- function(nhl_schedule) {
+  
+  teams_schedule &lt;- rbindlist(list(
+    nhl_schedule[, .(
+      season = season_years,
+      date = as.Date(game_datetime, tz = Sys.timezone()),
+      status = &quot;away&quot;,
+      team = away_team,
+      opponent = home_team
+    )],
+    nhl_schedule[, .(
+      season = season_years,
+      date = as.Date(game_datetime, tz = Sys.timezone()),
+      status = &quot;home&quot;,
+      team = home_team,
+      opponent = away_team
+    )]
+  ))
+  
+  teams_schedule[, venue := ifelse(status == &quot;home&quot;, team, opponent)]
+  
+  setkey(teams_schedule, season, team, date)
+  
+  teams_schedule[]
+  
+}
+
+# Appliquer la fonction au calendrier 2021
+teams_schedule_2021 &lt;- create_teams_schedule(nhl_schedule_2021)
+
+# Afficher un aperçu
+teams_schedule_2021[]
+#&gt;        season       date status team opponent venue
+#&gt;    1: 2020-21 2021-01-14   away  ANA      VGK   VGK
+#&gt;    2: 2020-21 2021-01-16   away  ANA      VGK   VGK
+#&gt;    3: 2020-21 2021-01-18   home  ANA      MIN   ANA
+#&gt;    4: 2020-21 2021-01-20   home  ANA      MIN   ANA
+#&gt;    5: 2020-21 2021-01-22   home  ANA      COL   ANA
+#&gt;   ---                                              
+#&gt; 1732: 2020-21 2021-05-01   home  WSH      PIT   WSH
+#&gt; 1733: 2020-21 2021-05-03   away  WSH      NYR   NYR
+#&gt; 1734: 2020-21 2021-05-05   away  WSH      NYR   NYR
+#&gt; 1735: 2020-21 2021-05-07   home  WSH      PHI   WSH
+#&gt; 1736: 2020-21 2021-05-08   home  WSH      PHI   WSH</code></pre>
+</div>
+<div id="transformation-des-donnees" class="section level2">
+<h2>Transformation des données</h2>
+<p>L’objectif de cette section est de mettre en relation les matchs successifs des équipes. On définit
+donc une fonction qui créera de nouvelles colonnes dans lesquelles on va indiquer la date et
+l’endroit du dernier match. On crée cette fonction et on l’applique à nos données dans le bloc
+ci-dessous.</p>
+<pre class="r"><code># Définir la fonction add_last_game()
+add_last_game &lt;- function(teams_schedule) {
+  
+  teams_schedule[, `:=`(
+    last_date = c(as.Date(NA), date[-.N]),
+    last_venue = c(team, venue[-.N])
+  ), .(season, team)]
+  
+}
+
+# Appliquer la fonction au calendrier 2021
+add_last_game(teams_schedule_2021)
+
+# Afficher un aperçu
+teams_schedule_2021[]
+#&gt;        season       date status team opponent venue  last_date last_venue
+#&gt;    1: 2020-21 2021-01-14   away  ANA      VGK   VGK       &lt;NA&gt;        ANA
+#&gt;    2: 2020-21 2021-01-16   away  ANA      VGK   VGK 2021-01-14        VGK
+#&gt;    3: 2020-21 2021-01-18   home  ANA      MIN   ANA 2021-01-16        VGK
+#&gt;    4: 2020-21 2021-01-20   home  ANA      MIN   ANA 2021-01-18        ANA
+#&gt;    5: 2020-21 2021-01-22   home  ANA      COL   ANA 2021-01-20        ANA
+#&gt;   ---                                                                    
+#&gt; 1732: 2020-21 2021-05-01   home  WSH      PIT   WSH 2021-04-29        WSH
+#&gt; 1733: 2020-21 2021-05-03   away  WSH      NYR   NYR 2021-05-01        WSH
+#&gt; 1734: 2020-21 2021-05-05   away  WSH      NYR   NYR 2021-05-03        NYR
+#&gt; 1735: 2020-21 2021-05-07   home  WSH      PHI   WSH 2021-05-05        NYR
+#&gt; 1736: 2020-21 2021-05-08   home  WSH      PHI   WSH 2021-05-07        WSH</code></pre>
+<p>On crée ensuite une autre table dans laquelle on viendra calculer les distances entre le domicile
+des différentes équipes. À des fins de simplicité, on pose l’hypothèse que toutes les distances sont
+calculées à vol d’oiseau entre ceux-ci. Pour ce faire, on va utiliser la fonction <code>distm()</code> du
+<em>package</em> <a href="http://r-forge.r-project.org/projects/geosphere/"><code>geosphere</code></a>.</p>
+<p>On commence donc par charger différentes informations sur chaque équipe (dont l’emplacement de leur
+amphithéâtre et leur division respective) à l’aide de la fonction <code>tidy_teams_meta()</code>. On calculera
+ensuite une matrice des distances qu’on transformera en table pour en faciliter l’interrogation.</p>
+<pre class="r"><code># Charger le package
+library(geosphere)
+
+# Charger les informations des équipes
+teams_meta &lt;- tidy_teams_meta()
+
+# Afficher un aperçu
+teams_meta[]
+#&gt;     team_abbreviation team_place      team_name        team_fullname team_shortname season_first_label conference_active_abbreviation conference_active_name division_active_abbreviation division_active_name venue_active_name venue_active_country venue_active_stateprovince venue_active_city     venue_active_tz venue_active_lat venue_active_long                                       logo_last_url
+#&gt;  1:               ANA    Anaheim          Ducks        Anaheim Ducks        Anaheim            1993-94                              W                Western                          WST           Honda West      Honda Center                  USA                         CA           Anaheim America/Los_Angeles         33.80778        -117.87667 https://assets.nhle.com/logos/nhl/svg/ANA_light.svg
+#&gt;  2:               ARI    Arizona        Coyotes      Arizona Coyotes        Arizona            2014-15                              W                Western                          WST           Honda West  Gila River Arena                  USA                         AZ          Glendale     America/Phoenix         33.53194        -112.26111 https://assets.nhle.com/logos/nhl/svg/ARI_light.svg
+#&gt;  3:               BOS     Boston         Bruins        Boston Bruins         Boston            1924-25                              E                Eastern                          EST      MassMutual East         TD Garden                  USA                         MA            Boston    America/New_York         42.36630         -71.06223 https://assets.nhle.com/logos/nhl/svg/BOS_light.svg
+#&gt;  4:               BUF    Buffalo         Sabres       Buffalo Sabres        Buffalo            1970-71                              E                Eastern                          EST      MassMutual East    KeyBank Center                  USA                         NY           Buffalo    America/New_York         42.87500         -78.87639 https://assets.nhle.com/logos/nhl/svg/BUF_light.svg
+#&gt;  5:               CAR   Carolina     Hurricanes  Carolina Hurricanes       Carolina            1997-98                              E                Eastern                          CEN     Discover Central         PNC Arena                  USA                         NC           Raleigh    America/New_York         35.80333         -78.72194 https://assets.nhle.com/logos/nhl/svg/CAR_light.svg
+#&gt; ---                                                                                                                                                                                                                                                                                                                                                                                                          
+#&gt; 27:               TOR    Toronto    Maple Leafs  Toronto Maple Leafs        Toronto            1926-27                              E                Eastern                          NTH         Scotia North  Scotiabank Arena               Canada                         ON           Toronto     America/Toronto         43.64333         -79.37917 https://assets.nhle.com/logos/nhl/svg/TOR_light.svg
+#&gt; 28:               VAN  Vancouver        Canucks    Vancouver Canucks      Vancouver            1970-71                              W                Western                          NTH         Scotia North      Rogers Arena               Canada                         BC         Vancouver   America/Vancouver         49.27778        -123.10889 https://assets.nhle.com/logos/nhl/svg/VAN_light.svg
+#&gt; 29:               VGK      Vegas Golden Knights Vegas Golden Knights          Vegas            2017-18                              W                Western                          WST           Honda West    T-Mobile Arena                  USA                         NV         Las Vegas America/Los_Angeles         36.10278        -115.17833 https://assets.nhle.com/logos/nhl/svg/VGK_light.svg
+#&gt; 30:               WPG   Winnipeg           Jets        Winnipeg Jets       Winnipeg            2011-12                              W                Western                          NTH         Scotia North    Bell MTS Place               Canada                         MB          Winnipeg    America/Winnipeg         49.89278         -97.14361 https://assets.nhle.com/logos/nhl/svg/WPG_light.svg
+#&gt; 31:               WSH Washington       Capitals  Washington Capitals     Washington            1974-75                              E                Eastern                          EST      MassMutual East Capital One Arena                  USA                         DC        Washington    America/New_York         38.89806         -77.02083 https://assets.nhle.com/logos/nhl/svg/WSH_light.svg
+
+# Calculer une matrice des distances en km
+venues_matrix &lt;- round(distm(teams_meta[, .(venue_active_long, venue_active_lat)]) / 1000L)
+
+# Convertir sous la forme d&#39;une table
+teams_distances &lt;- setDT(
+  expand.grid(team = teams_meta[, team_abbreviation], opponent = teams_meta[, team_abbreviation])
+)[, distance := as.integer(venues_matrix)]
+
+# Afficher un aperçu
+teams_distances[]
+#&gt;      team opponent distance
+#&gt;   1:  ANA      ANA        0
+#&gt;   2:  ARI      ANA      522
+#&gt;   3:  BOS      ANA     4161
+#&gt;   4:  BUF      ANA     3520
+#&gt;   5:  CAR      ANA     3566
+#&gt;  ---                       
+#&gt; 957:  TOR      WSH      563
+#&gt; 958:  VAN      WSH     3801
+#&gt; 959:  VGK      WSH     3364
+#&gt; 960:  WPG      WSH     2005
+#&gt; 961:  WSH      WSH        0</code></pre>
+</div>
+<div id="analyse-des-deplacements" class="section level2">
+<h2>Analyse des déplacements</h2>
+<p>Afin d’être en mesure de faire notre analyse, on doit tout d’abord poser d’autres hypothèses, cette
+fois par rapport à la fréquence de déplacement des équipes. Évidemment, celles-ci ne sont pas
+nécessairement exactes, mais j’ai essayé de construite un algorithme balancé entre simplicité et
+réalité.</p>
+<p>On pose donc les hypothèses suivantes :</p>
+<ul>
+<li>Chaque équipe est basée à son domicile en début de saison;</li>
+<li>Les déplacements à l’étranger sont effectués selon l’algorithme présenté ci-dessous.</li>
+</ul>
+<p><img src="figs-fr/algo-travel.png" /></p>
+<p>On peut faire un exemple concret en appliquant ces hypothèses au début de saison des
+<a href="https://www.nhl.com/fr/canadiens">Canadiens de Montréal</a> pour bien comprendre. On obtient alors,
+pour les deux premières semaines de leur calendrier, les voyages suivants :</p>
+<p><em>Match du 13 janvier 2021 (MTL @ TOR)</em></p>
+<ul>
+<li>L’équipe est basée à MTL en début de saison</li>
+</ul>
+<p><strong>⇒ Verdict : Voyage de MTL vers TOR <span class="emoji">✈️</span></strong></p>
+<hr />
+<p><em>Match du 16 janvier 2021 (MTL @ EDM)</em></p>
+<ul>
+<li>L’équipe joue 2 matchs consécutifs sur la route (13 et 16 janvier)</li>
+<li>Ces deux matchs ne sont pas contre le même adversaire (TOR et EDM)</li>
+<li>L’adversaire le plus près (TOR) n’est pas à plus de 2000 km de MTL</li>
+<li>L’équipe n’a pas 3 jours de congé entre les matchs (seulement les 14 et 15 janvier)</li>
+</ul>
+<p><strong>⇒ Verdict : Voyage de TOR vers EDM <span class="emoji">✈️</span></strong></p>
+<hr />
+<p><em>Match du 18 janvier 2021 (MTL @ EDM)</em></p>
+<ul>
+<li>L’équipe joue 2 matchs consécutifs sur la route (16 et 18 janvier)</li>
+<li>Ces deux matchs sont contre le même adversaire (EDM)</li>
+</ul>
+<p><strong>⇒ Verdict : Aucun voyage <span class="emoji">🏨</span></strong></p>
+<hr />
+<p><em>Match du 20 janvier 2021 (MTL @ VAN)</em></p>
+<ul>
+<li>L’équipe joue 2 matchs consécutifs sur la route (18 et 20 janvier)</li>
+<li>Ces deux matchs ne sont pas contre le même adversaire (EDM et VAN)</li>
+<li>L’adversaire le plus près (EDM) est à plus de 2000 km de MTL</li>
+<li>L’équipe n’a pas 5 jours de congé entre les matchs (seulement le 19 janvier)</li>
+</ul>
+<p><strong>⇒ Verdict : Voyage de EDM vers VAN <span class="emoji">✈️</span></strong></p>
+<hr />
+<p><em>Match du 21 janvier 2021 (MTL @ VAN)</em></p>
+<ul>
+<li>L’équipe joue 2 matchs consécutifs sur la route (20 et 21 janvier)</li>
+<li>Ces deux matchs sont contre le même adversaire (VAN)</li>
+</ul>
+<p><strong>⇒ Verdict : Aucun voyage <span class="emoji">🏨</span></strong></p>
+<hr />
+<p><em>Match du 23 janvier 2021 (MTL @ VAN)</em></p>
+<ul>
+<li>L’équipe joue 2 matchs consécutifs sur la route (21 et 23 janvier)</li>
+<li>Ces deux matchs sont contre le même adversaire (VAN)</li>
+</ul>
+<p><strong>⇒ Verdict : Aucun voyage <span class="emoji">🏨</span></strong></p>
+<hr />
+<p><em>Match du 28 janvier 2021 (CGY @ MTL)</em></p>
+<ul>
+<li>L’équipe ne joue pas 2 matchs consécutifs sur la route</li>
+</ul>
+<p><strong>⇒ Verdict : Voyage de VAN vers MTL <span class="emoji">✈️</span></strong></p>
+<p>On crée maintenant une fonction implantant cet algorithme et on l’applique à l’ensemble des équipes
+pour leur calendrier 2021.</p>
+<pre class="r"><code># Définir la fonction create_teams_travels()
+create_teams_travels &lt;- function(teams_schedule) {
+  
+  teams_travels &lt;- teams_schedule[, rbindlist(mapply(
+    FUN = function(team, venue, last_venue, off_days) {
+    
+      # Empêcher les collisions
+      TEAM &lt;- team
+      
+      # Aucun voyage
+      if (venue == last_venue) {
+        return(NULL)
+      }
+      
+      # Direction prochain match
+      if (is.na(off_days) | off_days &lt; 3L | team %in% c(venue, last_venue)) {
+        return(list(
+          from = last_venue,
+          to = venue
+        ))
+      }
+      
+      # Distance minimale du domicile
+      distance &lt;- teams_distances[team == TEAM &amp; opponent %in% c(venue, last_venue), min(distance)]
+      
+      # Direction domicile + Direction prochain match
+      if (off_days &gt;= 5L | (off_days &gt;= 3L &amp; distance &lt;= 2000L)) {
+        return(list(
+          from = c(last_venue, team),
+          to = c(team, venue)
+        ))
+      }
+      
+      # Direction prochain match
+      list(
+        from = last_venue,
+        to = venue
+      )
+    
+    },
+    team = team,
+    venue = venue,
+    last_venue = last_venue,
+    off_days = date - last_date - 1L,
+    SIMPLIFY = FALSE
+  )), .(season, team)]
+  
+  # Ajouter la distance des voyages
+  teams_travels[teams_distances, distance := distance, on = c(from = &quot;team&quot;, to = &quot;opponent&quot;)]
+  
+  # Appeler la valeur de sortie
+  teams_travels[]
+
+}
+
+# Appliquer la fonction au calendrier 2021 des équipes
+teams_travels_2021 &lt;- create_teams_travels(teams_schedule_2021)
+
+# Afficher un aperçu
+teams_travels_2021[]
+#&gt;       season team from  to distance
+#&gt;   1: 2020-21  ANA  ANA VGK      354
+#&gt;   2: 2020-21  ANA  VGK ANA      354
+#&gt;   3: 2020-21  ANA  ANA ARI      522
+#&gt;   4: 2020-21  ANA  ARI ANA      522
+#&gt;   5: 2020-21  ANA  ANA LAK       45
+#&gt;  ---                               
+#&gt; 744: 2020-21  WSH  BOS NYI      279
+#&gt; 745: 2020-21  WSH  NYI PHI      162
+#&gt; 746: 2020-21  WSH  PHI WSH      194
+#&gt; 747: 2020-21  WSH  WSH NYR      331
+#&gt; 748: 2020-21  WSH  NYR WSH      331</code></pre>
+<p>On peut facilement valider que notre exemple pour le début de saison des Canadiens est bien
+représenté par l’algorithme.</p>
+<pre class="r"><code>teams_travels_2021[team == &quot;MTL&quot;][1:4]
+#&gt;     season team from  to distance
+#&gt; 1: 2020-21  MTL  MTL TOR      505
+#&gt; 2: 2020-21  MTL  TOR EDM     2714
+#&gt; 3: 2020-21  MTL  EDM VAN      819
+#&gt; 4: 2020-21  MTL  VAN MTL     3696</code></pre>
+<p>On crée ensuite un sommaire par équipe indiquant la distance totale qui sera parcourue au cours de
+la saison 2021 auquel on vient ajouter la division actuelle de chaque équipe.</p>
+<pre class="r"><code># Définir la fonction create_teams_travel_summary()
+create_teams_travel_summary &lt;- function(teams_travels, nhl_schedule) {
+  
+  # Créer un tableau sommaire
+  teams_travel_summary &lt;- teams_travels[, .(
+    nb = .N,
+    km = sum(distance)
+  ), .(season, team)]
+  
+  # Ajout du nombre de km par jour de saison
+  nhl_season_days &lt;- nhl_schedule[, .(
+    season_years = season_years,
+    game_date = as.Date(game_datetime, tz = Sys.timezone())
+  )][, .(days = as.integer(max(game_date) - min(game_date) + 1L)), season_years]
+  teams_travel_summary[nhl_season_days, days := days, on = c(season = &quot;season_years&quot;)]
+  teams_travel_summary[, km_per_day := km / days]
+  
+  # Ajout des divisions
+  teams_travel_summary[teams_meta, division := division_active_name, on = c(team = &quot;team_abbreviation&quot;)]
+  
+  # Appeler la valeur de sortie
+  teams_travel_summary[]
+  
+}
+
+# Appliquer la fonction aux voyages 2021 des équipes
+teams_travel_summary_2021 &lt;- create_teams_travel_summary(teams_travels_2021, nhl_schedule_2021)
+
+# Afficher un aperçu
+teams_travel_summary_2021[]
+#&gt;      season team nb    km days km_per_day         division
+#&gt;  1: 2020-21  ANA 23 17275  118  146.39831       Honda West
+#&gt;  2: 2020-21  ARI 19 19110  118  161.94915       Honda West
+#&gt;  3: 2020-21  BOS 25  9012  118   76.37288  MassMutual East
+#&gt;  4: 2020-21  BUF 26 10483  118   88.83898  MassMutual East
+#&gt;  5: 2020-21  CAR 22 20457  118  173.36441 Discover Central
+#&gt; ---                                                       
+#&gt; 27: 2020-21  TOR 29 31852  118  269.93220     Scotia North
+#&gt; 28: 2020-21  VAN 22 33415  118  283.17797     Scotia North
+#&gt; 29: 2020-21  VGK 24 23275  118  197.24576       Honda West
+#&gt; 30: 2020-21  WPG 23 27515  118  233.17797     Scotia North
+#&gt; 31: 2020-21  WSH 25  7191  118   60.94068  MassMutual East</code></pre>
+<p>On affiche maintenant un graphique permettant de visualiser cette information pour l’ensemble des
+équipes de la ligue. On utilise respectivement les <em>packages</em>
+<a href="https://ggplot2.tidyverse.org"><code>ggplot2</code></a> et <a href="https://scales.r-lib.org"><code>scales</code></a> pour créer le
+graphique et en modifier le formatage.</p>
+<pre class="r"><code># Charger les packages
+library(ggplot2)
+library(scales)
+
+# Créer le graphique
+ggplot(
+  data = teams_travel_summary_2021,
+  mapping = aes(
+    x = km,
+    y = reorder(as.factor(team), km),
+    fill = division
+  )
+) +
+  geom_col() +
+  scale_x_continuous(
+    labels = label_number(),
+    expand = expansion(mult = c(0, 0.05))
+  ) +
+  scale_fill_brewer(palette = &quot;Set1&quot;) +
+  labs(
+    title = &quot;Distance totale à parcourir par équipe&quot;,
+    subtitle = &quot;Saison 2021 de la LNH&quot;,
+    x = &quot;Distance (km)&quot;
+  )</code></pre>
+<p><img src="figs-fr/plot_summary_2021-1.png" width="100%" /></p>
+<p>Comme on pouvait s’y en attendre, les équipes près de la région métropolitaine de New York sont
+celles qui auront la plus petite distance à parcourir. On voit clairement que les équipes de la
+division canadienne sont celles qui, en moyenne, parcoureront le plus de kilomètres pendant la
+saison. Cependant, la distribution à l’intérieur de cette division est assez uniforme, ce qui n’est
+pas le cas pour la division ouest. Alors que les Ducks n’auront qu’un peu plus de 17 000 km à
+parcourir pendant la saison, les Blues en parcoureront près de 35 000 (plus du double
+<span class="emoji">😱</span>!) pendant la même période. Reste à voir si ce sera assez pour
+permettre aux Ducks de compenser pour leur manque de talent offensif…</p>
+<p><img src="https://media.giphy.com/media/RNEGEAUjnQvzGRiCza/giphy.gif" /></p>
+<p>Une chose est certaine, si la fatigue accumulée générée en raison du voyagement pendant la saison
+s’avère être un bon indicateur de la performance des joueurs en séries, la division est partira avec
+un avantage considérable sur ses adversaires au printemps prochain.</p>
+</div>
+<div id="comparaison-avec-les-saisons-precedentes" class="section level2">
+<h2>Comparaison avec les saisons précédentes</h2>
+<p>Bien que la statistique absolue du nombre de kilomètres à parcourir pour chaque équipe lors de la
+saison 2021 soit intéressante, on pourrait aussi s’intéresser au changement relatif qu’apportent ces
+nouvelles divisions et ce nouveau calendrier à chaque équipe. Pour ce faire, on comparera la saison
+2021 aux saisons entre 2013-14 (dernier remaniement de divisions avant 2021) et 2019-20
+inclusivement.</p>
+<p>On applique donc les fonctions créées dans la section précédente une à la suite de l’autre. Ensuite,
+on calcule la moyenne de certaines métriques d’intérêt sur ces 7 saisons.</p>
+<pre class="r"><code># Obtenir les calendriers 2013-14 à 2019-20 de la LNH
+nhl_schedule_20132020 &lt;- tidy_schedule(
+  seasons_id = paste0(2013:2019, 2014:2020),
+  playoffs = FALSE
+)
+
+# Remplacer PHX par ARI
+nhl_schedule_20132020[away_team == &quot;PHX&quot;, away_team := &quot;ARI&quot;]
+nhl_schedule_20132020[home_team == &quot;PHX&quot;, home_team := &quot;ARI&quot;]
+
+# Créer une vue par équipe
+teams_schedule_20132020 &lt;- create_teams_schedule(nhl_schedule_20132020)
+
+# Transformation des données
+add_last_game(teams_schedule_20132020)
+
+# Créer une vue des déplacements
+teams_travels_20132020 &lt;- create_teams_travels(teams_schedule_20132020)
+
+# Créer le sommaire des déplacements par équipe par saison
+teams_travel_summary_20132020 &lt;- create_teams_travel_summary(teams_travels_20132020, nhl_schedule_20132020)
+
+# Créer le sommaire des déplacements par équipe
+teams_travel_summary_20132020 &lt;- teams_travel_summary_20132020[, .(
+  season = &quot;2013-20&quot;,
+  km_avg = mean(km),
+  km_per_day_avg = sum(km) / sum(days)
+), .(team, division)]
+
+# Afficher un aperçu
+teams_travel_summary_20132020[]
+#&gt;     team         division  season   km_avg km_per_day_avg
+#&gt;  1:  ANA       Honda West 2013-20 71663.71       390.9945
+#&gt;  2:  ARI       Honda West 2013-20 77372.29       422.1403
+#&gt;  3:  BOS  MassMutual East 2013-20 63927.00       348.7833
+#&gt;  4:  BUF  MassMutual East 2013-20 55257.86       301.4848
+#&gt;  5:  CAR Discover Central 2013-20 62885.29       343.0998
+#&gt; ---                                                      
+#&gt; 27:  TOR     Scotia North 2013-20 56366.86       307.5355
+#&gt; 28:  VAN     Scotia North 2013-20 72433.43       395.1941
+#&gt; 29:  WPG     Scotia North 2013-20 71265.57       388.8223
+#&gt; 30:  WSH  MassMutual East 2013-20 57520.14       313.8277
+#&gt; 31:  VGK       Honda West 2013-20 69383.00       389.0636</code></pre>
+<p>Afin de comparer des pommes avec des pommes, on utilisera cette fois-ci la métrique de kilomètres
+parcourus en moyenne par jour pendant la saison. Cette métrique normalisera donc les saisons
+écourtées de 2019-20 et 2021 à un niveau comparable aux autres.</p>
+<p>On affiche donc un graphique illustrant la réduction des déplacements quotidiens moyens par équipe
+pour la saison 2021 comparativement à la période de référence. Les résultats sont triés en ordre de
+diminution relative.</p>
+<pre class="r"><code># Créer le sommaire comparatif
+teams_travel_summary &lt;- copy(teams_travel_summary_2021[, .(team, division, km_per_day_2021 = km_per_day)])
+teams_travel_summary[teams_travel_summary_20132020, km_per_day_201320 := km_per_day_avg, on = .(team)]
+teams_travel_summary[, km_per_day_cut := (km_per_day_2021 / km_per_day_201320) - 1]
+
+# Créer le graphique
+ggplot(
+  data = teams_travel_summary,
+  mapping = aes(
+    y = reorder(as.factor(team), km_per_day_cut),
+    fill = division
+  )
+) +
+  geom_col(aes(x = km_per_day_2021), alpha = 1) +
+  geom_col(aes(x = km_per_day_201320), alpha = 0.5) +
+  geom_text(
+    mapping = aes(
+      x = km_per_day_2021,
+      label = percent(km_per_day_cut, 1)
+    ),
+    nudge_x = 2,
+    hjust = 0
+  ) +
+  scale_x_continuous(
+    labels = label_number(),
+    expand = expansion(mult = c(0, 0.05))
+  ) +
+  scale_fill_brewer(palette = &quot;Set1&quot;) +
+  labs(
+    title = &quot;Réduction des déplacements par équipe&quot;,
+    subtitle = &quot;Saisons 2021 vs 2013-14 à 2019-20 de la LNH&quot;,
+    x = &quot;Déplacement moyen (km) par jour&quot;
+  )</code></pre>
+<p><img src="figs-fr/plot_summary_201321-1.png" width="100%" /></p>
+<p>Sans surprise, on voit que le fait de disputer plusieurs matchs consécutifs contre le même
+adversaire réduit les déplacements globaux pour l’ensemble des équipes. Les grands gagnants de ce
+remaniement sont les équipes de la division est et ceux en retirant les bénéfices les moins
+importants (quoi que tout de même significatifs) sont principalement les équipes canadiennes. Ceci
+étant dit, mon coeur de partisan des Canadiens est toujours satisfait de voir les Leafs en dernière
+position d’un classement quel qu’il soit <span class="emoji">😁</span>.</p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>Bien que cet article mette en lumière l’asymétrie réelle qu’amènent ces nouvelles divisions au
+niveau du voyagement des équipes, il demeure très difficile de prédire si cela aura un effet
+quelconque sur leurs performances sur la glace. Une tonne d’impondérables se manifesteront au
+courant de la saison et ceux-ci risquent d’avoir encore plus de poids dans la balance. De plus,
+n’oublions pas que le calendrier présenté dans l’article est à jour en date d’aujourd’hui mais qu’il
+risque fortement d’évoluer en cours de route lorsque des éclosions de COVID-19 surviendront. Bref,
+soyons patients et apprécions le spectacle!</p>
+<p><img src="https://media.giphy.com/media/1SE3C3YtYcQ3Bl2WXA/giphy.gif" /></p>
+</div>
