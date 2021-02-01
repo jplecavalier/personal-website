@@ -1,5 +1,5 @@
 ---
-title: "Analysing the 2021 NHL divisions"
+title: "How the 2021 reshuffling of NHL divisions will lessen traveling"
 authors:
   - jplecavalier
 date: 2021-01-19
@@ -175,25 +175,24 @@ teams_distances[]
 
 ## Travel analysis
 
-Afin d'être en mesure de faire notre analyse, on doit tout d'abord poser d'autres hypothèses, cette
-fois par rapport à la fréquence de déplacement des équipes. Évidemment, celles-ci ne sont pas
-nécessairement exactes, mais j'ai essayé de construite un algorithme balancé entre simplicité et
-réalité.
+Before going any further, we need to assume additional hypothesis regarding travel habits of teams.
+Of course, it's impossible to have a perfect one-size-fits-all model, but I tried to rightly managed
+the required trade-off between simplicity and reality when designing the algorithm.
 
-On pose donc les hypothèses suivantes :
+We will then assume the following assumptions:
 
-- Chaque équipe est basée à son domicile en début de saison;
-- Les déplacements à l'étranger sont effectués selon l'algorithme présenté ci-dessous.
+- Each team is located home at the beginning of the season,
+- Trips abroad follow the algorithm below.
     
 ![](figs-en/algo-travel.png)
 
-On peut faire un exemple concret en appliquant ces hypothèses au début de saison des
-[Canadiens de Montréal](https://www.nhl.com/en/canadiens) pour bien comprendre. On obtient alors,
-pour les deux premières semaines de leur calendrier, les voyages suivants :
+To make sure it is well understood, we can apply the algorithm to the first few games of the
+[Montreal Canadiens](https://www.nhl.com/en/canadiens) and analyse the outcomes. For the first two
+weeks of the season, the resulting travels for the Habs are listed below:
 
 *January 13th 2021 game (MTL @ TOR)*
 
-- L'équipe est basée à MTL en début de saison
+- The team is in MTL when the season starts
 
 **&rArr; Outcome: Traveling from MTL to TOR `r emoji("airplane")`**
 
@@ -201,10 +200,10 @@ pour les deux premières semaines de leur calendrier, les voyages suivants :
 
 *January 16th 2021 game (MTL @ EDM)*
 
-- L'équipe joue 2 matchs consécutifs sur la route (13 et 16 janvier)
-- Ces deux matchs ne sont pas contre le même adversaire (TOR et EDM)
-- L'adversaire le plus près (TOR) n'est pas à plus de 2000 km de MTL
-- L'équipe n'a pas 3 jours de congé entre les matchs (seulement les 14 et 15 janvier)
+- The team plays 2 successive away games (January 13th and 16th)
+- Those games are not played against the same opponent (TOR and EDM)
+- The closest opponent (TOR) is not further than 2,000 km away from MTL
+- The team doesn't have 3 off days between those games (only January 14th and 15th)
 
 **&rArr; Outcome: Traveling from TOR to EDM `r emoji("airplane")`**
 
@@ -212,8 +211,8 @@ pour les deux premières semaines de leur calendrier, les voyages suivants :
 
 *January 18th 2021 game (MTL @ EDM)*
 
-- L'équipe joue 2 matchs consécutifs sur la route (16 et 18 janvier)
-- Ces deux matchs sont contre le même adversaire (EDM)
+- The team plays 2 successive away games (January 16th and 18th)
+- Those games are played against the same opponent (EDM)
 
 **&rArr; Outcome: Not traveling `r emoji("hotel")`**
 
@@ -221,10 +220,10 @@ pour les deux premières semaines de leur calendrier, les voyages suivants :
 
 *January 20th 2021 game (MTL @ VAN)*
 
-- L'équipe joue 2 matchs consécutifs sur la route (18 et 20 janvier)
-- Ces deux matchs ne sont pas contre le même adversaire (EDM et VAN)
-- L'adversaire le plus près (EDM) est à plus de 2000 km de MTL
-- L'équipe n'a pas 5 jours de congé entre les matchs (seulement le 19 janvier)
+- The team plays 2 successive away games (January 18th and 20th)
+- Those games are not played against the same opponent (EDM and VAN)
+- The closest opponent (EDM) is further than 2,000 km away from MTL
+- The team doesn't have 5 off days between those games (only January 19th)
 
 **&rArr; Outcome: Traveling from EDM to VAN `r emoji("airplane")`**
 
@@ -232,8 +231,8 @@ pour les deux premières semaines de leur calendrier, les voyages suivants :
 
 *January 21st 2021 game (MTL @ VAN)*
 
-- L'équipe joue 2 matchs consécutifs sur la route (20 et 21 janvier)
-- Ces deux matchs sont contre le même adversaire (VAN)
+- The team plays 2 successive away games (January 20th and 21st)
+- Those games are played against the same opponent (VAN)
 
 **&rArr; Outcome: Not traveling `r emoji("hotel")`**
 
@@ -241,8 +240,8 @@ pour les deux premières semaines de leur calendrier, les voyages suivants :
 
 *January 23rd 2021 game (MTL @ VAN)*
 
-- L'équipe joue 2 matchs consécutifs sur la route (21 et 23 janvier)
-- Ces deux matchs sont contre le même adversaire (VAN)
+- The team plays 2 successive away games (January 21st and 23rd)
+- Those games are played against the same opponent (VAN)
 
 **&rArr; Outcome: Not traveling `r emoji("hotel")`**
 
@@ -250,12 +249,11 @@ pour les deux premières semaines de leur calendrier, les voyages suivants :
 
 *January 28th 2021 game (CGY @ MTL)*
 
-- L'équipe ne joue pas 2 matchs consécutifs sur la route
+- The team doesn't play 2 successive away games
 
 **&rArr; Outcome: Traveling from VAN to MTL `r emoji("airplane")`**
 
-On crée maintenant une fonction implantant cet algorithme et on l'applique à l'ensemble des équipes
-pour le calendrier 2021.
+We create a function implementing this algorithm and we apply it to every teams for the 2021 season.
 
 ```{r travel_view}
 # Define the create_teams_travels() function
@@ -320,8 +318,8 @@ teams_travels_2021 <- create_teams_travels(teams_schedule_2021)
 teams_travels_2021[]
 ```
 
-On peut facilement valider que notre exemple pour le début de saison des Canadiens est bien
-représenté par l'algorithme.
+We could easily validate that the function gives the expected results for our previous specific
+example on the Canadiens.
 
 ```{r mtl_head}
 teams_travels_2021[team == "MTL"][1:4]
@@ -329,6 +327,9 @@ teams_travels_2021[team == "MTL"][1:4]
 
 On crée ensuite un sommaire par équipe indiquant la distance totale qui sera parcourue au cours de
 la saison 2021 auquel on vient ajouter la division actuelle de chaque équipe.
+
+We then create a summary indicating the total distance on which each team will have to travel during
+the 2021 season. We also add the actual divisions for a matter of making comparisons among them.
 
 ```{r summary_2021}
 # Define the create_teams_travel_summary() function
@@ -363,10 +364,9 @@ teams_travel_summary_2021 <- create_teams_travel_summary(teams_travels_2021, nhl
 teams_travel_summary_2021[]
 ```
 
-On affiche maintenant un graphique permettant de visualiser cette information pour l'ensemble des
-équipes de la ligue. On utilise respectivement les *packages*
-[`ggplot2`](https://ggplot2.tidyverse.org) et [`scales`](https://scales.r-lib.org) pour créer le
-graphique et en modifier le formatage.
+We now plot this data to facilitate its interpretation. The
+[`ggplot2`](https://ggplot2.tidyverse.org) and [`scales`](https://scales.r-lib.org) packages are
+respectively used for creating the plot and customizing its format.
 
 ```{r plot_summary_2021, fig.height=8}
 # Load the packages
@@ -395,31 +395,31 @@ ggplot(
   )
 ```
 
-Comme on pouvait s'y en attendre, les équipes près de la région métropolitaine de New York sont
-celles qui auront la plus petite distance à parcourir. On voit clairement que les équipes de la
-division canadienne sont celles qui, en moyenne, parcoureront le plus de kilomètres pendant la
-saison. Cependant, la distribution à l'intérieur de cette division est assez uniforme, ce qui n'est
-pas le cas pour la division ouest. Alors que les Ducks n'auront qu'un peu plus de 17 000 km à
-parcourir pendant la saison, les Blues en parcoureront près de 35 000 (plus du double
-`r emoji("face_screaming_in_fear")`!) pendant la même période. Reste à voir si ce sera assez pour
-permettre aux Ducks de compenser pour leur manque de talent offensif...
+As one may probably have guessed right, the three teams in the New York Metropolitan Area (NYR, NYI
+and NJD) are those who will travel on the shortest distance for the season. Teams in the
+all-Canadian division are those that, in average, will travel on the greatest distance. However, one
+could observe that the distribution within this division is rather uniform, which is not the case
+for the Western division. While the Anaheim Ducks will only need to travel a slight more than 17,000
+km over the course of the season, the St. Louis Blues will accumulate just short of 35,000 km
+(more than twice `r emoji("face_screaming_in_fear")`!) on the same period. We'll see if that
+competitive advantage for the Ducks will prove enough to overcome their obvious lack of offensive
+skills...
 
 ![](https://media.giphy.com/media/RNEGEAUjnQvzGRiCza/giphy.gif)
 
-Une chose est certaine, si la fatigue accumulée générée en raison du voyagement pendant la saison
-s'avère être un bon indicateur de la performance des joueurs en séries, la division est partira avec
-un avantage considérable sur ses adversaires au printemps prochain.
+One sure thing, if the accumulated tiredness coming from traveling during the season is an important
+factor on players' performance in playoffs, teams from the Eastern division will have a major
+headstart when playing other teams this spring.
 
 ## Comparing with previous seasons
 
-Bien que la statistique absolue du nombre de kilomètres à parcourir pour chaque équipe lors de la
-saison 2021 soit intéressante, on pourrait aussi s'intéresser au changement relatif qu'apportent ces
-nouvelles divisions et ce nouveau calendrier à chaque équipe. Pour ce faire, on comparera la saison
-2021 aux saisons entre 2013-14 (dernier remaniement de divisions avant 2021) et 2019-20
-inclusivement.
+Although the absolute traveling distance of each team for the 2021 season is insightfull, it could
+also be interesting to look at the relative change induce by those new divisions and the new
+schedule patterns on each team. To do so, we will compare the 2021 season to seasons between 2013-14
+(the last time the NHL shuffled the divisions before this year) and 2019-20.
 
-On applique donc les fonctions créées dans la section précédente une à la suite de l'autre. Ensuite,
-on calcule la moyenne de certaines métriques d'intérêt sur ces 7 saisons.
+Ww reuse the functions defined in the last section one after the other. Then, we compute average
+metrics on those 7 seasons.
 
 ```{r summary_20132020}
 # Get the 2013-14 to 2019-20 NHL schedule
@@ -455,13 +455,12 @@ teams_travel_summary_20132020 <- teams_travel_summary_20132020[, .(
 teams_travel_summary_20132020[]
 ```
 
-Afin de comparer des pommes avec des pommes, on utilisera cette fois-ci la métrique de kilomètres
-parcourus en moyenne par jour pendant la saison. Cette métrique normalisera donc les saisons
-écourtées de 2019-20 et 2021 à un niveau comparable aux autres.
+To make sure we compare apples to apples, we will this time study the average daily traveling
+distance during the season. This metric ensures that the 2019-20 and 2021 seasons won't skew the
+global picture because they were shortened following the COVID-19 outbreak.
 
-On affiche donc un graphique illustrant la réduction des déplacements quotidiens moyens par équipe
-pour la saison 2021 comparativement à la période de référence. Les résultats sont triés en ordre de
-diminution relative.
+The following plot shows the observed decrease in average daily traveling distance by team for the
+2021 season compared to the reference period. Results are sorted by relative decreasing.
 
 ```{r plot_summary_201321, fig.height=8}
 # Create comparative summary
@@ -499,22 +498,22 @@ ggplot(
   )
 ```
 
-Sans surprise, on voit que le fait de disputer plusieurs matchs consécutifs contre le même
-adversaire réduit le déplacement annuel pour l'ensemble des équipes. Les grands gagnants de ce
-remaniement sont les équipes de la division est et ceux en retirant les bénéfices les moins
-importants (quoi que tout de même significatifs) sont principalement les équipes canadiennes. Ceci
-étant dit, mon coeur de partisan des Canadiens est toujours satisfait de voir les Leafs en dernière
-position d'un classement quel qu'il soit `r emoji("beaming_face_with_smiling_eyes")`.
+There is no surprise in observing that the mini-series concept, in which two teams play successive
+games one agaist the other, does reduce the traveling distance for all and every teams. The big
+winners of this reshuffling are indisputably the Eastern division teams while those experiencing the
+most modest gains (yet still interesting) are mainly the Canadian teams. That being said, I forever
+am a mad Montreal Canadiens fan, and the most important thing of all for me is to see the Leafs
+(agin and again) proudly sitting in the last position of whatever ranking there is
+`r emoji("beaming_face_with_smiling_eyes")`.
 
 ## Conclusion
 
-Bien que cet article mette en lumière l'asymétrie réelle qu'amènent ces nouvelles divisions au
-niveau du voyagement des équipes, il demeure très difficile de prédire si cela aura un effet
-quelconque sur leurs performances sur la glace. Une tonne d'impondérables se manifesteront au
-courant de la saison et ceux-ci risquent d'avoir encore plus de poids dans la balance. De plus,
-n'oublions pas que le calendrier présenté dans l'article est à jour en date d'aujourd'hui mais qu'il
-risque fortement d'évoluer en cours de route lorsque des éclosions de COVID-19 surviendront. Bref,
-soyons patients et apprécions le spectacle!
+Even though this post highlighted the traveling asymmetries created by the reshuffling of the NHL
+divisions, it still remains difficult to predict it all of this will have a significant impact on
+the ice. The season promise to offer its share of unpredictable surprises, with some of them having
+probably even greater consequences at the end. Moreover, it's important to remember that the
+schedule presented in this post is up-to-date as of today, but is very likely to change with little
+notice with COVID-19 local outbreaks. After all, there is nothing more we can do than to wait and
+see, and of course, enjoy the show!
 
 ![](https://media.giphy.com/media/1SE3C3YtYcQ3Bl2WXA/giphy.gif)
-
