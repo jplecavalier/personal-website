@@ -2,7 +2,7 @@
 title: "Comment les divisions 2021 de la LNH réduiront les déplacements"
 authors:
   - jplecavalier
-date: 2021-01-19
+date: 2021-02-01
 
 tags:
   - r

@@ -2,7 +2,7 @@
 title: "How the 2021 reshuffling of NHL divisions will lessen traveling"
 authors:
   - jplecavalier
-date: 2021-01-19
+date: 2021-02-01
 
 tags:
   - r
