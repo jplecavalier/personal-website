@@ -387,7 +387,7 @@ ggplot(
   scale_fill_brewer(palette = "Set1") +
   labs(
     title = "Total traveling distance by team",
-    subtitle = "NHL 2021 season",
+    subtitle = "2021 NHL season",
     x = "Distance (km)"
   )
 ```
