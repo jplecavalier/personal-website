@@ -58,7 +58,7 @@ ggplot2::theme_update(
 
 ## Team schedules for the 2021 season
 
-To begin, let's get and print an excerpt of the NHL 2021 schedule with the `tidy_schedule()`
+To begin, let's get and print an excerpt of the NHL 2021 schedule with the `tidy_schedules()`
 function.
 
 ```{r get_2021_schedule}
@@ -67,7 +67,7 @@ library(data.table)
 library(tidynhl)
 
 # Get the 2021 NHL schedule
-nhl_schedule_2021 <- tidy_schedule(
+nhl_schedule_2021 <- tidy_schedules(
   seasons_id = "20202021",
   playoffs = FALSE
 )
@@ -89,15 +89,15 @@ create_teams_schedule <- function(nhl_schedule) {
       season = season_years,
       date = as.Date(game_datetime, tz = Sys.timezone()),
       status = "away",
-      team = away_team,
-      opponent = home_team
+      team = away_abbreviation,
+      opponent = home_abbreviation
     )],
     nhl_schedule[, .(
       season = season_years,
       date = as.Date(game_datetime, tz = Sys.timezone()),
       status = "home",
-      team = home_team,
-      opponent = away_team
+      team = home_abbreviation,
+      opponent = away_abbreviation
     )]
   ))
   
@@ -420,14 +420,14 @@ metrics on those 7 seasons.
 
 ```{r summary_20132020}
 # Get the 2013-14 to 2019-20 NHL schedule
-nhl_schedule_20132020 <- tidy_schedule(
+nhl_schedule_20132020 <- tidy_schedules(
   seasons_id = paste0(2013:2019, 2014:2020),
   playoffs = FALSE
 )
 
 # Replace PHX by ARI
-nhl_schedule_20132020[away_team == "PHX", away_team := "ARI"]
-nhl_schedule_20132020[home_team == "PHX", home_team := "ARI"]
+nhl_schedule_20132020[away_abbreviation == "PHX", away_abbreviation := "ARI"]
+nhl_schedule_20132020[home_abbreviation == "PHX", home_abbreviation := "ARI"]
 
 # Create teams' schedule
 teams_schedule_20132020 <- create_teams_schedule(nhl_schedule_20132020)

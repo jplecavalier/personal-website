@@ -47,31 +47,31 @@ utilisant leur API ouvert de statistiques.</p>
 <div id="calendrier-2021-des-equipes" class="section level2">
 <h2>Calendrier 2021 des équipes</h2>
 <p>Pour commencer, on charge et on affiche un extrait du calendrier 2021 de la LNH à l’aide de la
-fonction <code>tidy_schedule()</code>.</p>
+fonction <code>tidy_schedules()</code>.</p>
 <pre class="r"><code># Charger les packages
 library(data.table)
 library(tidynhl)
 
 # Obtenir le calendrier 2021 de la LNH
-nhl_schedule_2021 &lt;- tidy_schedule(
+nhl_schedule_2021 &lt;- tidy_schedules(
   seasons_id = &quot;20202021&quot;,
   playoffs = FALSE
 )
 
 # Afficher un extrait du calendrier
 nhl_schedule_2021[]
-#&gt;      season_years season_type       game_datetime game_status             venue_name away_team away_score home_score home_team game_nbot game_shootout
-#&gt;   1:      2020-21     regular 2021-01-13 17:30:00       final     Wells Fargo Center       PIT          3          6       PHI         0         FALSE
-#&gt;   2:      2020-21     regular 2021-01-13 19:00:00       final       Scotiabank Arena       MTL          4          5       TOR         1         FALSE
-#&gt;   3:      2020-21     regular 2021-01-13 20:00:00       final           Amalie Arena       CHI          1          5       TBL         0         FALSE
-#&gt;   4:      2020-21     regular 2021-01-13 22:00:00       final           Rogers Place       VAN          5          3       EDM         0         FALSE
-#&gt;   5:      2020-21     regular 2021-01-13 22:30:00       final             Ball Arena       STL          4          1       COL         0         FALSE
-#&gt;  ---                                                                                                                                                  
-#&gt; 864:      2020-21     regular 2021-05-08 22:00:00   scheduled           Rogers Arena       CGY         NA         NA       VAN        NA            NA
-#&gt; 865:      2020-21     regular 2021-05-08 22:00:00   scheduled         T-Mobile Arena       STL         NA         NA       VGK        NA            NA
-#&gt; 866:      2020-21     regular 2021-05-08 22:00:00   scheduled         STAPLES Center       COL         NA         NA       LAK        NA            NA
-#&gt; 867:      2020-21     regular 2021-05-08 22:30:00   scheduled SAP Center at San Jose       ARI         NA         NA       SJS        NA            NA
-#&gt; 868:      2020-21     regular 2021-05-10 19:00:00   scheduled           Amalie Arena       DAL         NA         NA       TBL        NA            NA</code></pre>
+#&gt;      season_years season_type       game_datetime game_status             venue_name away_abbreviation away_score home_score home_abbreviation game_nbot game_shootout
+#&gt;   1:      2020-21     regular 2021-01-13 17:30:00       final     Wells Fargo Center               PIT          3          6               PHI         0         FALSE
+#&gt;   2:      2020-21     regular 2021-01-13 19:00:00       final       Scotiabank Arena               MTL          4          5               TOR         1         FALSE
+#&gt;   3:      2020-21     regular 2021-01-13 20:00:00       final           Amalie Arena               CHI          1          5               TBL         0         FALSE
+#&gt;   4:      2020-21     regular 2021-01-13 22:00:00       final           Rogers Place               VAN          5          3               EDM         0         FALSE
+#&gt;   5:      2020-21     regular 2021-01-13 22:30:00       final             Ball Arena               STL          4          1               COL         0         FALSE
+#&gt;  ---                                                                                                                                                                  
+#&gt; 864:      2020-21     regular 2021-05-08 22:00:00   scheduled           Rogers Arena               CGY         NA         NA               VAN        NA            NA
+#&gt; 865:      2020-21     regular 2021-05-08 22:00:00   scheduled         T-Mobile Arena               STL         NA         NA               VGK        NA            NA
+#&gt; 866:      2020-21     regular 2021-05-08 22:00:00   scheduled         STAPLES Center               COL         NA         NA               LAK        NA            NA
+#&gt; 867:      2020-21     regular 2021-05-08 22:30:00   scheduled SAP Center at San Jose               ARI         NA         NA               SJS        NA            NA
+#&gt; 868:      2020-21     regular 2021-05-10 19:00:00   scheduled           Amalie Arena               DAL         NA         NA               TBL        NA            NA</code></pre>
 <p>On fait ensuite une transformation des données pour garder les colonnes d’intérêt et dupliquer les
 lignes dans le but d’avoir une vue pour chaque équipe. Ces étapes seront traitées à l’intérieur
 d’une fonction qui pourra être réutilisée un peu plus loin dans l’article.</p>
@@ -83,15 +83,15 @@ create_teams_schedule &lt;- function(nhl_schedule) {
       season = season_years,
       date = as.Date(game_datetime, tz = Sys.timezone()),
       status = &quot;away&quot;,
-      team = away_team,
-      opponent = home_team
+      team = away_abbreviation,
+      opponent = home_abbreviation
     )],
     nhl_schedule[, .(
       season = season_years,
       date = as.Date(game_datetime, tz = Sys.timezone()),
       status = &quot;home&quot;,
-      team = home_team,
-      opponent = away_team
+      team = home_abbreviation,
+      opponent = away_abbreviation
     )]
   ))
   
@@ -169,7 +169,7 @@ teams_meta &lt;- tidy_teams_meta()
 
 # Afficher un aperçu
 teams_meta[]
-#&gt;     team_abbreviation team_place      team_name        team_fullname team_shortname season_first_label conference_active_abbreviation conference_active_name division_active_abbreviation division_active_name venue_active_name venue_active_country venue_active_stateprovince venue_active_city     venue_active_tz venue_active_lat venue_active_long                                       logo_last_url
+#&gt;     team_abbreviation team_place      team_name        team_fullname team_shortname season_first_years conference_active_abbreviation conference_active_name division_active_abbreviation division_active_name venue_active_name venue_active_country venue_active_stateprovince venue_active_city     venue_active_tz venue_active_lat venue_active_long                                       logo_last_url
 #&gt;  1:               ANA    Anaheim          Ducks        Anaheim Ducks        Anaheim            1993-94                              W                Western                          WST           Honda West      Honda Center                  USA                         CA           Anaheim America/Los_Angeles         33.80778        -117.87667 https://assets.nhle.com/logos/nhl/svg/ANA_light.svg
 #&gt;  2:               ARI    Arizona        Coyotes      Arizona Coyotes        Arizona            2014-15                              W                Western                          WST           Honda West  Gila River Arena                  USA                         AZ          Glendale     America/Phoenix         33.53194        -112.26111 https://assets.nhle.com/logos/nhl/svg/ARI_light.svg
 #&gt;  3:               BOS     Boston         Bruins        Boston Bruins         Boston            1924-25                              E                Eastern                          EST      MassMutual East         TD Garden                  USA                         MA            Boston    America/New_York         42.36630         -71.06223 https://assets.nhle.com/logos/nhl/svg/BOS_light.svg
@@ -448,14 +448,14 @@ inclusivement.</p>
 <p>On applique donc les fonctions créées dans la section précédente une à la suite de l’autre. Ensuite,
 on calcule la moyenne de certaines métriques d’intérêt sur ces 7 saisons.</p>
 <pre class="r"><code># Obtenir les calendriers 2013-14 à 2019-20 de la LNH
-nhl_schedule_20132020 &lt;- tidy_schedule(
+nhl_schedule_20132020 &lt;- tidy_schedules(
   seasons_id = paste0(2013:2019, 2014:2020),
   playoffs = FALSE
 )
 
 # Remplacer PHX par ARI
-nhl_schedule_20132020[away_team == &quot;PHX&quot;, away_team := &quot;ARI&quot;]
-nhl_schedule_20132020[home_team == &quot;PHX&quot;, home_team := &quot;ARI&quot;]
+nhl_schedule_20132020[away_abbreviation == &quot;PHX&quot;, away_abbreviation := &quot;ARI&quot;]
+nhl_schedule_20132020[home_abbreviation == &quot;PHX&quot;, home_abbreviation := &quot;ARI&quot;]
 
 # Créer une vue par équipe
 teams_schedule_20132020 &lt;- create_teams_schedule(nhl_schedule_20132020)
